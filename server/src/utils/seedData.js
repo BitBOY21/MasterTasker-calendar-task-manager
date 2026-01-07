@@ -5,9 +5,8 @@ const Task = require('../models/Task');
 const { calculateUrgency } = require('./taskUtils');
 
 const seedData = async () => {
-    console.log('🌱 Seeding Demo User Data...');
+    console.log('🌱 Seeding highly realistic, diverse data starting from Jan 7th...');
 
-    // 1. Create Demo User
     const email = 'demo@example.com';
     let user = await User.findOne({ email });
 
@@ -19,139 +18,184 @@ const seedData = async () => {
             email,
             password: hashedPassword
         });
-        console.log('👤 Created user: demo@example.com / 123456');
-    } else {
-        console.log('👤 Found user: demo@example.com');
     }
 
-    // 2. Clear existing tasks for this user
     await Task.deleteMany({ user: user._id });
 
     const tasks = [];
     const today = new Date();
     
-    // Helper functions
-    const addDays = (date, days) => {
-        const d = new Date(date);
-        d.setDate(d.getDate() + days);
-        return d;
+    // Helper to create dates relative to Jan 7, 2025
+    const d = (day, hour = 9, min = 0) => new Date(2025, 0, day, hour, min);
+
+    const TAGS = {
+        WORK: "Work 💼",
+        PERSONAL: "Personal 🏠",
+        URGENT: "Urgent 🔥",
+        HEALTH: "Health 💪",
+        STUDY: "Study 📚",
+        FINANCE: "Finance 💰"
     };
 
-    const setTime = (date, hours, minutes) => {
-        const d = new Date(date);
-        d.setHours(hours, minutes, 0, 0);
-        return d;
-    };
-
-    // --- 1. Today's Tasks (The "Focus" List) ---
+    // --- 1. Multi-Day Projects (Spanning several days) ---
     tasks.push(
         {
-            title: "Morning Standup Meeting",
+            user: user._id,
+            title: "Q1 Strategy Planning",
             priority: "High",
-            tags: ["Work 💼", "Urgent 🔥"],
-            dueDate: setTime(today, 9, 0),
-            endDate: setTime(today, 9, 30),
-            isCompleted: true, // Already done
-            description: "Daily sync with the dev team."
-        },
-        {
-            title: "Review Project Proposal",
-            priority: "High",
-            tags: ["Work 💼"],
-            dueDate: setTime(today, 11, 0),
-            endDate: setTime(today, 12, 30),
-            isCompleted: false, // Urgent & Pending
+            tags: [TAGS.WORK, TAGS.URGENT],
+            dueDate: d(7, 8, 0), // Starts Jan 7
+            endDate: d(10, 18, 0), // Ends Jan 10 (4 days)
+            isCompleted: true,
+            description: "Defining goals and KPIs for the first quarter.",
             subtasks: [
-                { text: "Read executive summary", isCompleted: true },
-                { text: "Add comments", isCompleted: false },
-                { text: "Send feedback email", isCompleted: false }
+                { text: "Review last year's performance", isCompleted: true },
+                { text: "Draft new objectives", isCompleted: true },
+                { text: "Present to stakeholders", isCompleted: true }
             ]
         },
         {
-            title: "Lunch with Sarah",
+            user: user._id,
+            title: "Home Renovation: Kitchen",
             priority: "Medium",
-            tags: ["Personal 🏠", "Social"],
-            dueDate: setTime(today, 13, 0),
-            endDate: setTime(today, 14, 0),
-            isCompleted: true,
-            location: "Italian Bistro"
+            tags: [TAGS.PERSONAL],
+            dueDate: d(12, 9, 0), // Starts Jan 12
+            endDate: d(19, 17, 0), // Ends Jan 19 (8 days)
+            isCompleted: false,
+            description: "Painting walls and replacing cabinet handles.",
+            subtasks: [
+                { text: "Buy paint and brushes", isCompleted: true },
+                { text: "Remove old handles", isCompleted: false },
+                { text: "Apply first coat of paint", isCompleted: false }
+            ]
         },
         {
-            title: "Finish React Component",
-            priority: "Medium",
-            tags: ["Work 💼", "Study 📚"],
-            dueDate: setTime(today, 15, 0),
-            endDate: setTime(today, 17, 0),
-            isCompleted: false
-        },
-        {
-            title: "Gym Workout",
+            user: user._id,
+            title: "Deep Learning Course - Module 1",
             priority: "Low",
-            tags: ["Health 💪"],
-            dueDate: setTime(today, 18, 30),
-            endDate: setTime(today, 20, 0),
+            tags: [TAGS.STUDY],
+            dueDate: d(20, 10, 0), // Starts Jan 20
+            endDate: d(25, 16, 0), // Ends Jan 25 (6 days)
             isCompleted: false
         }
     );
 
-    // --- 2. Upcoming Tasks (This Week) ---
+    // --- 2. Overdue Single-Day Tasks (Scattered dates) ---
     tasks.push(
         {
-            title: "Grocery Shopping",
+            user: user._id,
+            title: "Pay Electricity Bill",
+            priority: "High",
+            tags: [TAGS.FINANCE, TAGS.URGENT],
+            dueDate: d(7, 14, 30), // Jan 7
+            isCompleted: false,
+            description: "Avoid late fees!"
+        },
+        {
+            user: user._id,
+            title: "Update Portfolio Website",
             priority: "Medium",
-            tags: ["Shopping 🛒", "Errands 🏃"],
-            dueDate: setTime(addDays(today, 1), 17, 0),
+            tags: [TAGS.WORK],
+            dueDate: d(9, 11, 0), // Jan 9
             isCompleted: false
         },
         {
-            title: "Dentist Appointment",
-            priority: "High",
-            tags: ["Health 💪", "Urgent 🔥"],
-            dueDate: setTime(addDays(today, 2), 10, 0),
-            location: "City Dental Clinic",
-            isCompleted: false
-        },
-        {
-            title: "Submit Tax Report",
-            priority: "High",
-            tags: ["Finance 💰"],
-            dueDate: setTime(addDays(today, 3), 9, 0),
-            isCompleted: false
-        },
-        {
-            title: "Weekend Trip Planning",
+            user: user._id,
+            title: "Call Grandma",
             priority: "Low",
-            tags: ["Family 👨‍👩‍👧‍👦", "Personal 🏠"],
-            dueDate: setTime(addDays(today, 4), 20, 0),
+            tags: [TAGS.PERSONAL],
+            dueDate: d(11, 19, 0), // Jan 11
+            isCompleted: false
+        },
+        {
+            user: user._id,
+            title: "Submit Expense Reports",
+            priority: "High",
+            tags: [TAGS.WORK, TAGS.FINANCE],
+            dueDate: d(15, 10, 0), // Jan 15
             isCompleted: false
         }
     );
 
-    // --- 3. Past Tasks (History & Stats) ---
-    // Generate 15 random past tasks
-    for (let i = 1; i <= 15; i++) {
-        const isCompleted = Math.random() > 0.2; // 80% completion rate
-        const priority = Math.random() > 0.7 ? "High" : (Math.random() > 0.4 ? "Medium" : "Low");
-        
-        tasks.push({
-            title: `Past Task ${i}`,
-            priority: priority,
-            tags: ["Work 💼", "Personal 🏠"],
-            dueDate: setTime(addDays(today, -i), 10, 0),
-            isCompleted: isCompleted,
-            description: "Auto-generated history task."
-        });
-    }
+    // --- 3. Today's Tasks (Dynamic) ---
+    const t = (h, m) => {
+        const date = new Date(today);
+        date.setHours(h, m, 0, 0);
+        return date;
+    };
 
-    // Add user ID and calculate urgency for all
-    const finalTasks = tasks.map(t => ({
-        ...t,
-        user: user._id,
-        urgencyScore: calculateUrgency(t.dueDate, t.priority)
+    tasks.push(
+        {
+            user: user._id,
+            title: "Morning Standup",
+            priority: "High",
+            tags: [TAGS.WORK],
+            dueDate: t(9, 30),
+            isCompleted: true
+        },
+        {
+            user: user._id,
+            title: "Client Feedback Review",
+            priority: "High",
+            tags: [TAGS.WORK, TAGS.URGENT],
+            dueDate: t(11, 0),
+            isCompleted: false,
+            subtasks: [
+                { text: "Read email from John", isCompleted: true },
+                { text: "Draft response", isCompleted: false }
+            ]
+        },
+        {
+            user: user._id,
+            title: "Gym: Leg Day",
+            priority: "Medium",
+            tags: [TAGS.HEALTH],
+            dueDate: t(17, 0),
+            isCompleted: false
+        },
+        {
+            user: user._id,
+            title: "Read 20 pages of a book",
+            priority: "Low",
+            tags: [TAGS.PERSONAL, TAGS.STUDY],
+            dueDate: t(21, 30),
+            isCompleted: false
+        }
+    );
+
+    // --- 4. Future Tasks ---
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    tasks.push(
+        {
+            user: user._id,
+            title: "Dentist Checkup",
+            priority: "High",
+            tags: [TAGS.HEALTH],
+            dueDate: new Date(tomorrow.setHours(10, 0)),
+            isCompleted: false
+        },
+        {
+            user: user._id,
+            title: "Monthly Budget Review",
+            priority: "Medium",
+            tags: [TAGS.FINANCE],
+            dueDate: new Date(nextWeek.setHours(15, 0)),
+            isCompleted: false
+        }
+    );
+
+    // Calculate urgency and save
+    const finalTasks = tasks.map(task => ({
+        ...task,
+        urgencyScore: calculateUrgency(task.dueDate, task.priority)
     }));
 
     await Task.insertMany(finalTasks);
-    console.log(`✅ Seeded ${finalTasks.length} tasks successfully!`);
+    console.log(`✅ Seeded ${finalTasks.length} diverse tasks with unique dates and multi-day projects.`);
 };
 
 module.exports = seedData;

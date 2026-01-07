@@ -17,6 +17,7 @@ const taskSchema = Joi.object({
     location: Joi.string().allow(''),
     subtasks: Joi.array().items(
         Joi.object({
+            _id: Joi.any(), // Allow MongoDB ID
             text: Joi.string().required(),
             isCompleted: Joi.boolean()
         })
@@ -40,6 +41,7 @@ const taskUpdateSchema = Joi.object({
     location: Joi.string().allow(''),
     subtasks: Joi.array().items(
         Joi.object({
+            _id: Joi.any(), // Allow MongoDB ID
             text: Joi.string().required(),
             isCompleted: Joi.boolean()
         })
