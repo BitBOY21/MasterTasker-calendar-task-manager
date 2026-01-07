@@ -50,17 +50,27 @@ export const useTasks = () => {
     // Update Task
     const updateTask = async (id, updatedData) => {
         try {
-            // Optimistic Update
-            setTasks(prev => prev.map(t => t._id === id ? { ...t, ...updatedData } : t));
+            // Optimistic Update - update immediately for better UX
+            setTasks(prev => prev.map(t => {
+                // Handle both string and ObjectId comparison
+                const taskId = typeof t._id === 'string' ? t._id : t._id?.toString();
+                const updateId = typeof id === 'string' ? id : id?.toString();
+                return taskId === updateId ? { ...t, ...updatedData } : t;
+            }));
             
+            // Send update to server
             const result = await taskService.update(id, updatedData);
             
-            // Re-sync with server response (optional, ensures consistency)
-            setTasks(prev => prev.map(t => t._id === id ? result : t));
+            // Re-sync with server response to ensure consistency
+            setTasks(prev => prev.map(t => {
+                const taskId = typeof t._id === 'string' ? t._id : t._id?.toString();
+                const resultId = typeof result._id === 'string' ? result._id : result._id?.toString();
+                return taskId === resultId ? result : t;
+            }));
             return result;
         } catch (err) {
             console.error("Error updating task:", err);
-            // Revert on error (would need previous state, keeping simple for now)
+            // Revert on error by refetching from server
             fetchTasks(); 
             throw err;
         }

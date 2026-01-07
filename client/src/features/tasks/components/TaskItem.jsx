@@ -74,9 +74,10 @@ const TaskItem = ({ task, onDelete, onUpdate }) => {
         setIsEditing(false);
     };
 
-    const handleQuickComplete = (e) => {
+    const handleQuickComplete = async (e) => {
         e.stopPropagation();
-        onUpdate(task._id, { isCompleted: !task.isCompleted, status: !task.isCompleted ? 'Completed' : 'Active' });
+        const newCompletedState = !task.isCompleted;
+        await onUpdate(task._id, { isCompleted: newCompletedState });
     };
 
     // Subtasks logic

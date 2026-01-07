@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
 const validate = require('../middleware/validateMiddleware');
-const { taskSchema } = require('../utils/validationSchemas');
+const { taskSchema, taskUpdateSchema } = require('../utils/validationSchemas');
 
 const {
     getTasks,
@@ -21,7 +21,7 @@ router.route('/')
     .post(protect, validate(taskSchema), createTask); // Added Validation
 
 router.route('/:id')
-    .put(protect, validate(taskSchema), updateTask) // Added Validation
+    .put(protect, validate(taskUpdateSchema), updateTask) // Use update schema (all fields optional)
     .delete(protect, deleteTask);
 
 router.post('/:id/ai-assist', protect, generateAiSuggestions);
