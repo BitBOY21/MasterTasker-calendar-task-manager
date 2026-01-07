@@ -1,0 +1,82 @@
+### ==========================================
+### 1. AUTHENTICATION (Public Routes)
+### ==========================================
+
+### Register a New User
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Tomer Dev",
+  "email": "tomer2@example.com",
+  "password": "password123"
+}
+
+### Login User (Get your Token here!)
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "tomer2@example.com",
+  "password": "password123"
+}
+
+### ==========================================
+### 2. TASKS (Protected Routes)
+### ==========================================
+
+### Get All Tasks
+GET http://localhost:5000/api/tasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTI3ZTNiYmVhODA1ZDZkNzFlMGNlMSIsImlhdCI6MTc2NzAxMzk0NywiZXhwIjoxNzY5NjA1OTQ3fQ.HZ9H8P7SM_OAH_D_DfClYWIiTXlScVXlv-M7OG6ws8o
+
+### Create a New Task
+POST http://localhost:5000/api/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTI3ZTNiYmVhODA1ZDZkNzFlMGNlMSIsImlhdCI6MTc2NzAxMzk0NywiZXhwIjoxNzY5NjA1OTQ3fQ.HZ9H8P7SM_OAH_D_DfClYWIiTXlScVXlv-M7OG6ws8o
+
+{
+  "title": "Finish the React Course",
+  "description": "Learn about Hooks and Context API"
+}
+
+### Update Task (Toggle Completion)
+PUT http://localhost:5000/api/tasks/YOUR_TASK_ID_HERE
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTI3ZTNiYmVhODA1ZDZkNzFlMGNlMSIsImlhdCI6MTc2NzAxMzk0NywiZXhwIjoxNzY5NjA1OTQ3fQ.HZ9H8P7SM_OAH_D_DfClYWIiTXlScVXlv-M7OG6ws8o
+
+{
+  "isCompleted": true
+}
+
+### Delete Task
+DELETE http://localhost:5000/api/tasks/YOUR_TASK_ID_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTI3ZTNiYmVhODA1ZDZkNzFlMGNlMSIsImlhdCI6MTc2NzAxMzk0NywiZXhwIjoxNzY5NjA1OTQ3fQ.HZ9H8P7SM_OAH_D_DfClYWIiTXlScVXlv-M7OG6ws8o
+
+### Generate AI Suggestions (Gemini)
+POST http://localhost:5000/api/tasks/YOUR_TASK_ID_HERE/ai-assist
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTI3ZTNiYmVhODA1ZDZkNzFlMGNlMSIsImlhdCI6MTc2NzAxMzk0NywiZXhwIjoxNzY5NjA1OTQ3fQ.HZ9H8P7SM_OAH_D_DfClYWIiTXlScVXlv-M7OG6ws8o
+
+{}
+
+### Create HIGH Urgency Task (Should have high score)
+POST http://localhost:5000/api/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTI3ZTNiYmVhODA1ZDZkNzFlMGNlMSIsImlhdCI6MTc2NzAxMzk0NywiZXhwIjoxNzY5NjA1OTQ3fQ.HZ9H8P7SM_OAH_D_DfClYWIiTXlScVXlv-M7OG6ws8o
+
+{
+  "title": "Pay Taxes",
+  "priority": "High",
+  "dueDate": "2025-12-30"
+}
+
+### Create LOW Urgency Task
+POST http://localhost:5000/api/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTI3ZTNiYmVhODA1ZDZkNzFlMGNlMSIsImlhdCI6MTc2NzAxMzk0NywiZXhwIjoxNzY5NjA1OTQ3fQ.HZ9H8P7SM_OAH_D_DfClYWIiTXlScVXlv-M7OG6ws8o
+
+{
+  "title": "Watch Netflix",
+  "priority": "Low",
+  "dueDate": "2026-01-01"
+}
