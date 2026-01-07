@@ -13,7 +13,6 @@ const SidebarFilters = ({
     onClearDate 
 }) => {
     
-    // Helper functions for state updates
     const updateFilter = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
@@ -30,8 +29,7 @@ const SidebarFilters = ({
         <div style={styles.container}>
             
             <div style={styles.header}>
-                <h3 style={styles.title}>🎯 Controls</h3>
-                {/* Reset button */}
+                <h3 style={styles.title}>Filters</h3>
                 <button 
                     onClick={() => setFilters({ status: 'all', priority: 'all', tags: [] })}
                     style={styles.resetLink}
@@ -40,7 +38,6 @@ const SidebarFilters = ({
                 </button>
             </div>
 
-            {/* --- Selected Date Display (if any) --- */}
             {selectedDate && (
                 <div style={styles.activeDateCard}>
                     <span style={{fontSize: '0.9rem'}}>📅 Date: <b>{new Date(selectedDate).toLocaleDateString()}</b></span>
@@ -48,7 +45,6 @@ const SidebarFilters = ({
                 </div>
             )}
 
-            {/* --- 1. Status Filter --- */}
             <div style={styles.section}>
                 <label style={styles.label}>Status</label>
                 <div style={styles.pillsRow}>
@@ -73,7 +69,6 @@ const SidebarFilters = ({
                 </div>
             </div>
 
-            {/* --- 2. Priority Filter --- */}
             <div style={styles.section}>
                 <label style={styles.label}>Priority</label>
                 <div style={styles.pillsRow}>
@@ -98,7 +93,6 @@ const SidebarFilters = ({
                 </div>
             </div>
 
-            {/* --- 3. Tags Filter --- */}
             <div style={styles.section}>
                 <label style={styles.label}>Tags</label>
                 <div style={styles.tagsContainer}>
@@ -126,22 +120,27 @@ const SidebarFilters = ({
 };
 
 const styles = {
-    container: { backgroundColor: 'white', padding: '20px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #f0f0f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' },
-    title: { margin: 0, fontSize: '1.1rem', color: '#333' },
-    resetLink: { background: 'none', border: 'none', color: '#007bff', fontSize: '0.85rem', cursor: 'pointer', textDecoration: 'underline' },
+    // Removed card styles (background, shadow, border)
+    container: { 
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px'
+    },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' },
+    title: { margin: 0, fontSize: '0.9rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' },
+    resetLink: { background: 'none', border: 'none', color: '#007bff', fontSize: '0.85rem', cursor: 'pointer' },
     
-    activeDateCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '10px', borderRadius: '8px', marginBottom: '20px', color: '#1565c0' },
+    activeDateCard: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#e3f2fd', padding: '8px 12px', borderRadius: '8px', marginBottom: '10px', color: '#1565c0' },
     clearDateBtn: { background: 'none', border: 'none', color: '#1565c0', cursor: 'pointer', display: 'flex', alignItems: 'center' },
 
-    section: { marginBottom: '20px' },
-    label: { display: 'block', fontSize: '0.85rem', fontWeight: 'bold', color: '#888', marginBottom: '8px', textTransform: 'uppercase' },
+    section: { marginBottom: '10px' },
+    label: { display: 'block', fontSize: '0.8rem', fontWeight: '600', color: '#555', marginBottom: '6px' },
     
-    pillsRow: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-    pillBtn: { border: 'none', padding: '6px 14px', borderRadius: '20px', cursor: 'pointer', fontSize: '0.85rem', transition: 'all 0.2s' },
+    pillsRow: { display: 'flex', flexWrap: 'wrap', gap: '6px' },
+    pillBtn: { border: 'none', padding: '5px 12px', borderRadius: '15px', cursor: 'pointer', fontSize: '0.8rem', transition: 'all 0.2s' },
 
-    tagsContainer: { display: 'flex', flexWrap: 'wrap', gap: '6px' },
-    tagBtn: { border: '1px solid', padding: '4px 10px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', backgroundColor: 'transparent' }
+    tagsContainer: { display: 'flex', flexWrap: 'wrap', gap: '5px' },
+    tagBtn: { border: '1px solid', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', backgroundColor: 'transparent' }
 };
 
 export default SidebarFilters;
