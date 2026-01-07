@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { buttonSecondary } from '../../components/ui/DesignSystem';
-import { FaChevronDown, FaSearch } from 'react-icons/fa';
+import { FaChevronDown, FaSearch, FaSortAmountDown } from 'react-icons/fa';
 
 const TAG_OPTIONS = [
     "Work 💼", "Personal 🏠", "Shopping 🛒", "Health 💪", 
@@ -15,6 +15,7 @@ const NewSummaryFilters = ({
     dateFilter, setDateFilter,
     customStartDate, setCustomStartDate,
     customEndDate, setCustomEndDate,
+    sortBy, setSortBy,
     onReset
 }) => {
     
@@ -47,7 +48,7 @@ const NewSummaryFilters = ({
     return (
         <div style={styles.container}>
             
-            {/* Row 1: Search & Reset */}
+            {/* Row 1: Search, Reset, Sort */}
             <div style={styles.topRow}>
                 <div style={styles.searchBox}>
                     <FaSearch color="#999" />
@@ -60,9 +61,25 @@ const NewSummaryFilters = ({
                     />
                 </div>
                 
-                <button onClick={onReset} style={styles.resetBtn}>
-                    Reset All
-                </button>
+                <div style={styles.topRightGroup}>
+                    <button onClick={onReset} style={styles.resetBtn}>
+                        Reset All
+                    </button>
+
+                    <div style={styles.sortBox}>
+                        <FaSortAmountDown color="#666" size={12} />
+                        <select 
+                            value={sortBy} 
+                            onChange={(e) => setSortBy && setSortBy(e.target.value)} 
+                            style={styles.sortSelect}
+                        >
+                            <option value="date_desc">Newest First</option>
+                            <option value="date_asc">Oldest First</option>
+                            <option value="priority">Priority</option>
+                            <option value="name">Name (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             {/* Row 2: Filters */}
@@ -230,6 +247,11 @@ const styles = {
         alignItems: 'center',
         width: '100%'
     },
+    topRightGroup: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px'
+    },
     bottomRow: {
         display: 'flex',
         alignItems: 'center',
@@ -267,6 +289,25 @@ const styles = {
         padding: '6px 12px', 
         borderRadius: '6px',
         transition: 'all 0.2s'
+    },
+
+    sortBox: { 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '6px', 
+        backgroundColor: '#f8f9fa', 
+        padding: '6px 12px', 
+        borderRadius: '6px', 
+        border: '1px solid #ddd' 
+    },
+    sortSelect: { 
+        border: 'none', 
+        background: 'transparent', 
+        outline: 'none', 
+        fontSize: '0.8rem', 
+        cursor: 'pointer', 
+        color: '#555',
+        fontWeight: '500'
     },
 
     group: { 

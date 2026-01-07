@@ -1,22 +1,27 @@
 import React, { useState, useMemo } from 'react';
 import { useTaskContext } from '../context/TaskContext'; 
-import TaskFilters from '../features/tasks/components/TaskFilters'; 
+import NewSummaryFilters from '../features/dashboard/NewSummaryFilters'; 
 import TaskForm from '../features/tasks/components/TaskForm'; 
 import Card from '../components/ui/Card';
 import SummaryStats from '../features/analytics/components/summary/SummaryStats';
 import SummaryCharts from '../features/analytics/components/summary/SummaryCharts';
 import ActivityLog from '../features/analytics/components/summary/ActivityLog';
-import { FaSearch, FaSortAmountDown, FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
+import { isToday, isThisWeek, isThisMonth, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
 const AnalyticsPage = ({ user }) => { 
     const { tasks, updateTask, deleteTask } = useTaskContext();
     const userName = user?.name || 'User';
     
+    // Filter States
     const [filter, setFilter] = useState('All'); 
     const [visibleTasksCount, setVisibleTasksCount] = useState(5); 
     const [priorityFilter, setPriorityFilter] = useState('all');
     const [activeTags, setActiveTags] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [dateFilter, setDateFilter] = useState('all'); 
+    const [customStartDate, setCustomStartDate] = useState('');
+    const [customEndDate, setCustomEndDate] = useState('');
     const [sortBy, setSortBy] = useState('date_desc'); 
     
     const [editingTask, setEditingTask] = useState(null); 
@@ -24,15 +29,56 @@ const AnalyticsPage = ({ user }) => {
     const filteredTasks = useMemo(() => {
         return tasks
             .filter(task => {
+                // Status
                 if (filter === 'Completed' && !task.isCompleted) return false;
                 if (filter === 'Pending' && task.isCompleted) return false;
                 if (filter === 'High Priority' && task.priority !== 'High') return false;
+                
+                // Priority
                 if (priorityFilter !== 'all' && task.priority !== priorityFilter) return false;
+                
+                // Tags
                 if (activeTags.length > 0) {
                     const hasTag = task.tags && task.tags.some(t => activeTags.includes(t));
                     if (!hasTag) return false;
                 }
+                
+                // Search
                 if (searchTerm && !task.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+
+                // Date Filter
+                if (dateFilter && dateFilter !== 'all') {
+                    if (!task.dueDate) return false;
+                    const taskDate = new Date(task.dueDate);
+
+                    switch (dateFilter) {
+                        case 'today':
+                            if (!isToday(taskDate)) return false;
+                            break;
+                        case 'week':
+                            if (!isThisWeek(taskDate, { weekStartsOn: 0 })) return false;
+                            break;
+                        case 'month':
+                            if (!isThisMonth(taskDate)) return false;
+                            break;
+                        case 'custom':
+                            if (customStartDate && customEndDate) {
+                                const start = startOfDay(new Date(customStartDate));
+                                const end = endOfDay(new Date(customEndDate));
+                                if (!isWithinInterval(taskDate, { start, end })) return false;
+                            } else if (customStartDate) {
+                                 const start = startOfDay(new Date(customStartDate));
+                                 if (taskDate < start) return false;
+                            } else if (customEndDate) {
+                                const end = endOfDay(new Date(customEndDate));
+                                if (taskDate > end) return false;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
                 return true;
             })
             .sort((a, b) => {
@@ -46,10 +92,21 @@ const AnalyticsPage = ({ user }) => {
                     default: return 0;
                 }
             });
-    }, [tasks, filter, priorityFilter, activeTags, searchTerm, sortBy]);
+    }, [tasks, filter, priorityFilter, activeTags, searchTerm, sortBy, dateFilter, customStartDate, customEndDate]);
 
     const toggleTag = (tag) => {
         setActiveTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+    };
+
+    const handleResetAll = () => {
+        setFilter('All');
+        setPriorityFilter('all');
+        setActiveTags([]);
+        setSearchTerm('');
+        setDateFilter('all');
+        setCustomStartDate('');
+        setCustomEndDate('');
+        setSortBy('date_desc');
     };
 
     return (
@@ -66,35 +123,19 @@ const AnalyticsPage = ({ user }) => {
             <Card style={{ padding: '25px', marginBottom: '20px' }}>
                 <div style={styles.sectionHeader}>
                     <h3 style={styles.sectionTitle}>📋 All Tasks ({filteredTasks.length})</h3>
-                    
-                    <div style={styles.controls}>
-                        <div style={styles.searchBox}>
-                            <FaSearch color="#999" />
-                            <input 
-                                type="text" 
-                                placeholder="Search tasks..." 
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                style={styles.searchInput}
-                            />
-                        </div>
-                        <div style={styles.sortBox}>
-                            <FaSortAmountDown color="#999" />
-                            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={styles.sortSelect}>
-                                <option value="date_desc">Newest First</option>
-                                <option value="date_asc">Oldest First</option>
-                                <option value="priority">Priority</option>
-                                <option value="name">Name (A-Z)</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
 
                 <div style={styles.filtersWrapper}>
-                    <TaskFilters 
+                    <NewSummaryFilters 
                         statusFilter={filter} setStatusFilter={setFilter}
                         priorityFilter={priorityFilter} setPriorityFilter={setPriorityFilter}
                         activeTags={activeTags} toggleTag={toggleTag}
+                        searchTerm={searchTerm} setSearchTerm={setSearchTerm}
+                        dateFilter={dateFilter} setDateFilter={setDateFilter}
+                        customStartDate={customStartDate} setCustomStartDate={setCustomStartDate}
+                        customEndDate={customEndDate} setCustomEndDate={setCustomEndDate}
+                        sortBy={sortBy} setSortBy={setSortBy}
+                        onReset={handleResetAll}
                     />
                 </div>
                 
@@ -171,12 +212,6 @@ const styles = {
     sectionHeader: { marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' },
     sectionTitle: { fontSize: '1.3rem', color: '#333', fontWeight: '700', margin: 0 },
     
-    controls: { display: 'flex', gap: '10px' },
-    searchBox: { display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f8f9fa', padding: '6px 12px', borderRadius: '8px', border: '1px solid #eee' },
-    searchInput: { border: 'none', background: 'transparent', outline: 'none', fontSize: '0.9rem', width: '150px' },
-    sortBox: { display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f8f9fa', padding: '6px 12px', borderRadius: '8px', border: '1px solid #eee' },
-    sortSelect: { border: 'none', background: 'transparent', outline: 'none', fontSize: '0.9rem', cursor: 'pointer', color: '#555' },
-
     filtersWrapper: { marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0' },
 
     scrollableList: { maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' },

@@ -84,8 +84,8 @@ const MySummary = ({ tasks, user, onUpdate, onDelete }) => {
                 case 'date_desc': return new Date(b.dueDate || 0) - new Date(a.dueDate || 0);
                 case 'date_asc': return new Date(a.dueDate || 0) - new Date(b.dueDate || 0);
                 case 'priority': 
-                    const pMap = { 'High': 3, 'Medium': 2, 'Low': 1 };
-                    return pMap[b.priority] - pMap[a.priority];
+                    { const pMap = { 'High': 3, 'Medium': 2, 'Low': 1 };
+                    return pMap[b.priority] - pMap[a.priority]; }
                 case 'name': return a.title.localeCompare(b.title);
                 default: return 0;
             }
