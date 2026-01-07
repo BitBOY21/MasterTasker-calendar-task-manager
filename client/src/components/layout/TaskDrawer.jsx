@@ -1,5 +1,5 @@
 import React from 'react';
-import TaskItem from '../../features/dashboard/TaskItem';
+import TaskItem from '../../features/tasks/components/TaskItem'; // Updated path
 
 const TaskDrawer = ({ isOpen, onClose, task, onUpdate, onDelete }) => {
     return (

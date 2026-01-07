@@ -1,7 +1,0 @@
-[PASTE YOUR AI RESPONSE HERE]
-For example:
-Here is the code for the new feature...
-```python
-def my_feature():
-    pass
-```
