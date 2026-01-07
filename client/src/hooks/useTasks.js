@@ -11,11 +11,20 @@ export const useTasks = () => {
         try {
             setLoading(true);
             const data = await taskService.getAll();
-            setTasks(data);
+            
+            // Defensive check: Ensure data is an array
+            if (Array.isArray(data)) {
+                setTasks(data);
+            } else {
+                console.error("API returned non-array data:", data);
+                setTasks([]); // Fallback to empty array
+                setError("Invalid data format from server");
+            }
             setError(null);
         } catch (err) {
             console.error("Error fetching tasks:", err);
             setError(err.message || "Failed to fetch tasks");
+            setTasks([]); // Ensure tasks is always an array on error
         } finally {
             setLoading(false);
         }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { authService } from '../../services/authService';
-import { glassCard, buttonPrimary, inputStyle, colors, gradientText, gradients } from '../../components/ui/DesignSystem';
+import { glassCard, buttonPrimary, inputStyle, gradientText } from '../../components/ui/DesignSystem';
 
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState('');
@@ -20,9 +20,12 @@ const Login = ({ onLogin }) => {
             } else {
                 data = await authService.login(email, password);
             }
-            onLogin(data.token);
+            // Pass the FULL data object (token + user info)
+            onLogin(data);
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong');
+            const msg = err.response?.data?.message || 'Something went wrong';
+            const details = err.response?.data?.errors ? ` (${err.response.data.errors.join(', ')})` : '';
+            setError(msg + details);
         }
     };
 

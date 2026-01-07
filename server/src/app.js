@@ -3,7 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const mongoSanitize = require('express-mongo-sanitize');
+// const mongoSanitize = require('express-mongo-sanitize'); // Removed due to incompatibility
 const xss = require('xss-clean');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorMiddleware');
@@ -16,14 +16,14 @@ connectDB();
 
 const app = express();
 
+// --- Standard Middleware (CORS First!) ---
+app.use(cors()); // Allow all origins
+app.use(express.json());
+
 // --- Security Middleware ---
 app.use(helmet()); // Set security headers
-app.use(mongoSanitize()); // Prevent NoSQL injection
+// app.use(mongoSanitize()); // DISABLED
 app.use(xss()); // Prevent XSS attacks
-
-// Standard Middleware
-app.use(express.json());
-app.use(cors());
 
 // Logging Middleware (Only in development)
 if (process.env.NODE_ENV === 'development') {
