@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { cardStyle, buttonPrimary, colors, gradientText, inputStyle } from '../../components/ui/DesignSystem';
+import { useTaskContext } from '../../context/TaskContext'; // Use Context
+import Card from '../../components/ui/Card';
+import Badge from '../../components/ui/Badge';
+import Button from '../../components/ui/Button';
 import { FaSearch, FaUndo } from 'react-icons/fa';
 
-const History = ({ tasks, onRestore }) => {
+const History = () => { // No props needed
+    const { tasks, updateTask } = useTaskContext();
     const [searchQuery, setSearchQuery] = useState('');
     
     // Filter completed tasks
@@ -29,6 +33,10 @@ const History = ({ tasks, onRestore }) => {
         });
     };
 
+    const handleRestore = async (id) => {
+        await updateTask(id, { isCompleted: false });
+    };
+
     return (
         <div style={styles.container}>
             <div style={styles.header}>
@@ -39,7 +47,7 @@ const History = ({ tasks, onRestore }) => {
             </div>
 
             {/* Search Card */}
-            <div style={{...cardStyle, marginBottom: '24px'}}>
+            <Card style={{ marginBottom: '24px', padding: '20px' }}>
                 <div style={styles.searchContainer}>
                     <FaSearch style={styles.searchIcon} />
                     <input
@@ -47,26 +55,13 @@ const History = ({ tasks, onRestore }) => {
                         placeholder="Search completed tasks..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        style={{
-                            ...inputStyle,
-                            paddingLeft: '45px'
-                        }}
-                        onFocus={(e) => {
-                            e.target.style.background = colors.white;
-                            e.target.style.borderColor = colors.primary;
-                            e.target.style.boxShadow = '0 0 0 3px rgba(0,123,255,0.1)';
-                        }}
-                        onBlur={(e) => {
-                            e.target.style.background = colors.gray;
-                            e.target.style.borderColor = 'transparent';
-                            e.target.style.boxShadow = 'none';
-                        }}
+                        style={styles.searchInput}
                     />
                 </div>
-            </div>
+            </Card>
 
             {/* Tasks List Card */}
-            <div style={cardStyle}>
+            <Card style={{ padding: '25px' }}>
                 <h3 style={styles.listTitle}>
                     Completed Tasks ({completedTasks.length})
                 </h3>
@@ -87,43 +82,20 @@ const History = ({ tasks, onRestore }) => {
                                     )}
                                     <div style={styles.taskMeta}>
                                         {task.priority && (
-                                            <span style={{
-                                                ...styles.tag,
-                                                backgroundColor: task.priority === 'High' 
-                                                    ? '#ffebee' 
-                                                    : task.priority === 'Medium' 
-                                                    ? '#fff3e0' 
-                                                    : '#e8f5e9',
-                                                color: task.priority === 'High' 
-                                                    ? '#c62828' 
-                                                    : task.priority === 'Medium' 
-                                                    ? '#e65100' 
-                                                    : '#2e7d32'
-                                            }}>
-                                                {task.priority}
-                                            </span>
+                                            <Badge variant={task.priority.toLowerCase()}>{task.priority}</Badge>
                                         )}
                                         {task.tags && task.tags.map(tag => (
-                                            <span key={tag} style={styles.tag}>
-                                                {tag}
-                                            </span>
+                                            <Badge key={tag} variant="neutral">{tag}</Badge>
                                         ))}
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => onRestore && onRestore(task._id)}
-                                    style={styles.restoreBtn}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.background = colors.primary;
-                                        e.target.style.color = colors.white;
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.background = 'transparent';
-                                        e.target.style.color = colors.primary;
-                                    }}
+                                <Button 
+                                    variant="secondary" 
+                                    onClick={() => handleRestore(task._id)}
+                                    style={{ border: '1px solid #007bff', color: '#007bff', background: 'transparent' }}
                                 >
                                     <FaUndo /> Restore
-                                </button>
+                                </Button>
                             </div>
                         ))}
                     </div>
@@ -132,7 +104,7 @@ const History = ({ tasks, onRestore }) => {
                         {searchQuery ? 'No tasks match your search.' : 'No completed tasks yet.'}
                     </div>
                 )}
-            </div>
+            </Card>
         </div>
     );
 };
@@ -142,17 +114,17 @@ const styles = {
         padding: '40px',
         maxWidth: '1000px',
         margin: '0 auto',
-        background: colors.background,
-        height: '100%', // Changed from minHeight: 100vh to allow scrolling within parent
+        background: '#f4f6f9',
+        height: '100%', 
         overflowY: 'auto',
-        paddingBottom: '80px' // Added padding at bottom
+        paddingBottom: '80px' 
     },
     header: {
         marginBottom: '40px',
         textAlign: 'center'
     },
     subtitle: {
-        color: colors.textSecondary,
+        color: '#666',
         fontSize: '1.1rem',
         fontWeight: '400'
     },
@@ -164,12 +136,21 @@ const styles = {
     searchIcon: {
         position: 'absolute',
         left: '18px',
-        color: colors.textMuted,
+        color: '#999',
         fontSize: '1rem'
+    },
+    searchInput: {
+        width: '100%',
+        padding: '12px 18px 12px 45px',
+        borderRadius: '12px',
+        border: '1px solid #eee',
+        fontSize: '1rem',
+        outline: 'none',
+        backgroundColor: '#f8f9fa'
     },
     listTitle: {
         fontSize: '1.3rem',
-        color: colors.textPrimary,
+        color: '#333',
         fontWeight: '700',
         marginBottom: '24px',
         borderBottom: '2px solid #f0f0f0',
@@ -185,7 +166,7 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'flex-start',
         padding: '20px',
-        background: colors.gray,
+        background: '#f8f9fa',
         borderRadius: '12px',
         border: '1px solid #e0e0e0',
         transition: 'all 0.2s ease',
@@ -206,20 +187,20 @@ const styles = {
     taskTitle: {
         fontSize: '1.1rem',
         fontWeight: '600',
-        color: colors.textPrimary,
+        color: '#333',
         textDecoration: 'line-through',
         opacity: 0.7,
         wordBreak: 'break-word'
     },
     taskDate: {
         fontSize: '0.85rem',
-        color: colors.textMuted,
+        color: '#999',
         fontWeight: '500',
         whiteSpace: 'nowrap'
     },
     taskDescription: {
         fontSize: '0.95rem',
-        color: colors.textSecondary,
+        color: '#666',
         marginBottom: '12px',
         lineHeight: '1.5',
         wordBreak: 'break-word'
@@ -229,33 +210,10 @@ const styles = {
         gap: '8px',
         flexWrap: 'wrap'
     },
-    tag: {
-        padding: '4px 12px',
-        borderRadius: '12px',
-        fontSize: '0.75rem',
-        fontWeight: '600',
-        backgroundColor: '#e3f2fd',
-        color: '#1565c0'
-    },
-    restoreBtn: {
-        background: 'transparent',
-        border: `2px solid ${colors.primary}`,
-        color: colors.primary,
-        borderRadius: '50px',
-        padding: '10px 20px',
-        fontSize: '0.9rem',
-        fontWeight: '600',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        flexShrink: 0
-    },
     emptyState: {
         textAlign: 'center',
         padding: '60px 20px',
-        color: colors.textMuted,
+        color: '#999',
         fontSize: '1rem',
         fontStyle: 'italic'
     }

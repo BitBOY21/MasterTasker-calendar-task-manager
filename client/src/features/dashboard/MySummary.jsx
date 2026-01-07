@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTaskContext } from '../../context/TaskContext'; // Use Context
 import SummaryFilters from './SummaryFilters';
 import TaskFormModal from './TaskFormModal'; 
 import Card from '../../components/ui/Card';
@@ -7,7 +8,8 @@ import SummaryCharts from './components/summary/SummaryCharts';
 import ActivityLog from './components/summary/ActivityLog';
 import { FaSearch, FaSortAmountDown, FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
 
-const MySummary = ({ tasks, user, onUpdate, onDelete }) => {
+const MySummary = ({ user }) => { // No need for tasks props anymore
+    const { tasks, updateTask, deleteTask } = useTaskContext();
     const userName = user?.name || 'User';
     
     // Filter States
@@ -103,7 +105,7 @@ const MySummary = ({ tasks, user, onUpdate, onDelete }) => {
                         filteredTasks.slice(0, visibleTasksCount).map(task => (
                             <div key={task._id} style={styles.taskRow}>
                                 <button 
-                                    onClick={() => onUpdate(task._id, { isCompleted: !task.isCompleted })}
+                                    onClick={() => updateTask(task._id, { isCompleted: !task.isCompleted })}
                                     style={{
                                         ...styles.checkBtn,
                                         backgroundColor: task.isCompleted ? '#4caf50' : 'transparent',
@@ -134,7 +136,7 @@ const MySummary = ({ tasks, user, onUpdate, onDelete }) => {
 
                                 <div style={styles.actions}>
                                     <button onClick={() => setEditingTask(task)} style={styles.iconBtn} title="Edit"><FaEdit /></button>
-                                    <button onClick={() => { if(window.confirm('Delete?')) onDelete(task._id) }} style={{...styles.iconBtn, color: '#dc3545'}} title="Delete"><FaTrash /></button>
+                                    <button onClick={() => { if(window.confirm('Delete?')) deleteTask(task._id) }} style={{...styles.iconBtn, color: '#dc3545'}} title="Delete"><FaTrash /></button>
                                 </div>
                             </div>
                         ))
@@ -157,8 +159,8 @@ const MySummary = ({ tasks, user, onUpdate, onDelete }) => {
             <TaskFormModal 
                 isOpen={!!editingTask} 
                 onClose={() => setEditingTask(null)}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
+                onUpdate={updateTask}
+                onDelete={deleteTask}
                 taskToEdit={editingTask}
             />
         </div>

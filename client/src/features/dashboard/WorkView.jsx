@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { useTaskContext } from '../../context/TaskContext'; // Use Context
 import CalendarView from './CalendarView';
 import TaskListSidebar from './TaskListSidebar';
 import SidebarFilters from './SidebarFilters';
 import TaskFormModal from './TaskFormModal';
 import Card from '../../components/ui/Card';
 
-const WorkView = ({ tasks, onDateSelect, onEventDrop, onEventClick, onDelete, onUpdate }) => {
+const WorkView = ({ onDateSelect, onEventDrop, onEventClick }) => { // No tasks props needed
+    const { tasks, updateTask, deleteTask } = useTaskContext();
+    
     const [filters, setFilters] = useState({
         status: 'all',
         priority: 'all',
@@ -59,8 +62,8 @@ const WorkView = ({ tasks, onDateSelect, onEventDrop, onEventClick, onDelete, on
                     <h3 style={styles.listTitle}>Tasks ({filteredTasks.length})</h3>
                     <TaskListSidebar 
                         tasks={filteredTasks} 
-                        onUpdate={onUpdate}
-                        onDelete={onDelete}
+                        onUpdate={updateTask}
+                        onDelete={deleteTask}
                         onDragEnd={() => {}} 
                     />
                 </div>
@@ -72,8 +75,8 @@ const WorkView = ({ tasks, onDateSelect, onEventDrop, onEventClick, onDelete, on
                     isOpen={!!editingTask}
                     taskToEdit={editingTask}
                     onClose={() => setEditingTask(null)}
-                    onUpdate={onUpdate}
-                    onDelete={onDelete}
+                    onUpdate={updateTask}
+                    onDelete={deleteTask}
                     onAdd={() => {}} 
                 />
             )}
@@ -90,12 +93,12 @@ const styles = {
         padding: '20px',
         overflow: 'hidden',
         backgroundColor: '#f4f6f9',
-        maxWidth: '1600px', // Limit max width for large screens
+        maxWidth: '1600px', 
         margin: '0 auto'
     },
     
     calendarArea: { 
-        flex: 3, // Takes 75% roughly
+        flex: 3, 
         overflow: 'hidden', 
         display: 'flex', 
         flexDirection: 'column',
@@ -104,14 +107,14 @@ const styles = {
     },
 
     sidebarArea: { 
-        flex: 1, // Takes 25% roughly
+        flex: 1, 
         minWidth: '320px',
         maxWidth: '400px',
         display: 'flex', 
         flexDirection: 'column', 
         overflow: 'hidden',
         height: '100%',
-        padding: '0' // Padding handled inside sections
+        padding: '0'
     },
     
     filtersSection: {

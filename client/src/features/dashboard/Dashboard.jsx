@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTasks } from '../../hooks/useTasks'; // Import the Hook
+import { useTaskContext } from '../../context/TaskContext'; // Use Context!
 import TaskFormModal from './TaskFormModal';
 import TaskListSidebar from './TaskListSidebar';
 import DailySummaryAI from './DailySummaryAI';
@@ -9,8 +9,8 @@ import Button from '../../components/ui/Button';
 import { FaPlus } from 'react-icons/fa';
 
 const Dashboard = ({ user }) => { 
-    // --- Use Custom Hook ---
-    const { tasks, addTask, updateTask, deleteTask, generateAI } = useTasks();
+    // --- Use Context ---
+    const { tasks, addTask, updateTask, deleteTask, generateAI } = useTaskContext();
     
     // UI State
     const [selectedDate, setSelectedDate] = useState(null);
@@ -21,7 +21,7 @@ const Dashboard = ({ user }) => {
     const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
     const userName = user?.name || 'User'; 
 
-    // --- Handlers (Simplified) ---
+    // --- Handlers ---
     const handleAddTask = async (newTask) => {
         if (selectedDate && !newTask.dueDate) {
             const d = new Date(selectedDate);
@@ -32,7 +32,7 @@ const Dashboard = ({ user }) => {
         await addTask(newTask);
     };
 
-    // --- Data Logic (View Specific) ---
+    // --- Data Logic ---
     const todayTasks = tasks.filter(t => {
         if (!t.dueDate) return false;
         const d = new Date(t.dueDate);
