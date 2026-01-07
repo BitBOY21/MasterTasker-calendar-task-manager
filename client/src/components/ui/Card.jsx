@@ -5,11 +5,11 @@ const Card = ({ children, className = '', style = {}, onClick }) => {
         <div 
             onClick={onClick}
             style={{
-                backgroundColor: 'white',
+                backgroundColor: '#ffffff',
                 borderRadius: '16px',
-                padding: '20px',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
-                border: '1px solid #f0f0f0',
+                padding: '25px', // Spacious padding
+                boxShadow: '0 4px 20px rgba(0,0,0,0.05)', // Soft shadow
+                border: 'none', // Removed border for cleaner look
                 transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                 ...style
             }}

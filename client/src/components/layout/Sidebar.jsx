@@ -1,6 +1,5 @@
 import React from 'react';
 import { FaHome, FaCalendarAlt, FaChartPie, FaHistory, FaCog, FaSignOutAlt } from 'react-icons/fa';
-// הייבוא הזה הוא מצוין, הוא "מביא" את התמונה לתוך הקוד
 import logo from '../../assets/logo.png';
 
 const Sidebar = ({ currentView, onChangeView, onLogout }) => {
@@ -12,74 +11,85 @@ const Sidebar = ({ currentView, onChangeView, onLogout }) => {
     ];
 
     return (
-        <div style={styles.sidebar}>
-            <div style={styles.logoContainer}>
-                <img src={logo} alt="MasterTasker" style={styles.logoImage} />
-            </div>
+        <div style={styles.sidebarContainer}>
+            <div style={styles.sidebar}>
+                <div style={styles.logoContainer}>
+                    <img src={logo} alt="MasterTasker" style={styles.logoImage} />
+                </div>
 
-            <nav style={styles.nav}>
-                {menuItems.map(item => (
+                <nav style={styles.nav}>
+                    {menuItems.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => onChangeView(item.id)}
+                            style={{
+                                ...styles.navItem,
+                                background: currentView === item.id 
+                                    ? 'linear-gradient(135deg, rgba(0,123,255,0.1), rgba(111,66,193,0.1))' 
+                                    : 'transparent',
+                                backgroundColor: currentView === item.id ? '#e3f2fd' : 'transparent',
+                                color: currentView === item.id ? '#007bff' : '#666',
+                                fontWeight: currentView === item.id ? '600' : '500',
+                                boxShadow: currentView === item.id ? '0 2px 8px rgba(0,123,255,0.15)' : 'none'
+                            }}
+                        >
+                            <span style={styles.icon}>{item.icon}</span>
+                            <span style={styles.label}>{item.label}</span>
+                        </button>
+                    ))}
+                </nav>
+
+                <div style={styles.footer}>
                     <button
-                        key={item.id}
-                        onClick={() => onChangeView(item.id)}
+                        onClick={() => onChangeView('settings')}
+                        style={styles.navItem}
+                    >
+                        <span style={styles.icon}><FaCog /></span> Settings
+                    </button>
+
+                    <button
+                        onClick={onLogout}
                         style={{
-                            ...styles.navItem,
-                            background: currentView === item.id 
-                                ? 'linear-gradient(135deg, rgba(0,123,255,0.1), rgba(111,66,193,0.1))' 
-                                : 'transparent',
-                            backgroundColor: currentView === item.id ? '#e3f2fd' : 'transparent',
-                            color: currentView === item.id ? '#007bff' : '#666',
-                            fontWeight: currentView === item.id ? '600' : '500',
-                            boxShadow: currentView === item.id ? '0 2px 8px rgba(0,123,255,0.15)' : 'none'
+                            ...styles.navItem, 
+                            color: '#d32f2f', 
+                            marginTop: '8px'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(211, 47, 47, 0.1)';
+                            e.currentTarget.style.color = '#b71c1c';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = '#d32f2f';
                         }}
                     >
-                        <span style={styles.icon}>{item.icon}</span>
-                        <span style={styles.label}>{item.label}</span>
+                        <span style={styles.icon}><FaSignOutAlt /></span> Logout
                     </button>
-                ))}
-            </nav>
-
-            <div style={styles.footer}>
-                <button
-                    onClick={() => onChangeView('settings')}
-                    style={styles.navItem}
-                >
-                    <span style={styles.icon}><FaCog /></span> Settings
-                </button>
-
-                <button
-                    onClick={onLogout}
-                    style={{
-                        ...styles.navItem, 
-                        color: '#d32f2f', 
-                        marginTop: '8px'
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(211, 47, 47, 0.1)';
-                        e.currentTarget.style.color = '#b71c1c';
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = '#d32f2f';
-                    }}
-                >
-                    <span style={styles.icon}><FaSignOutAlt /></span> Logout
-                </button>
+                </div>
             </div>
         </div>
     );
 };
 
 const styles = {
+    sidebarContainer: {
+        height: '100vh',
+        padding: '20px', // Margin from screen edges
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 100 // Ensure it stays above content if needed
+    },
     sidebar: {
         width: '260px',
-        backgroundColor: '#fff',
-        borderRight: '1px solid #e0e0e0',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', // Slight transparency
+        backdropFilter: 'blur(10px)', // Glass effect
+        borderRadius: '20px', // Rounded corners
         display: 'flex',
         flexDirection: 'column',
         padding: '24px 0',
-        height: '100%',
-        boxShadow: '2px 0 8px rgba(0,0,0,0.03)'
+        height: '100%', // Fill the container (which has padding)
+        boxShadow: '0 10px 30px rgba(0,0,0,0.05)', // Soft shadow
+        border: '1px solid rgba(255,255,255,0.5)' // Subtle border
     },
     logoContainer: {
         textAlign: 'center',

@@ -4,26 +4,27 @@ import { FaFire, FaCheckCircle, FaHourglassHalf } from 'react-icons/fa';
 
 const StatCard = ({ icon, color, label, value, subValue }) => (
     <Card style={{ 
-        padding: '20px', 
+        padding: '20px 25px', 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '15px', 
+        gap: '20px', 
         width: '100%',
-        borderLeft: `4px solid ${color}`
+        // Removed borderLeft
     }}>
         <div style={{
-            width: '45px', height: '45px', borderRadius: '12px', 
-            backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', 
-            justifyContent: 'center', fontSize: '1.2rem', color: color, flexShrink: 0
+            width: '50px', height: '50px', borderRadius: '14px', 
+            backgroundColor: `${color}15`, // 15 is hex alpha for ~8% opacity
+            display: 'flex', alignItems: 'center', 
+            justifyContent: 'center', fontSize: '1.4rem', color: color, flexShrink: 0
         }}>
             {icon}
         </div>
         <div>
-            <span style={{ fontSize: '0.85rem', color: '#666', display: 'block', marginBottom: '2px', fontWeight: '600' }}>
+            <span style={{ fontSize: '0.9rem', color: '#888', display: 'block', marginBottom: '4px', fontWeight: '600' }}>
                 {label}
             </span>
-            <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#333', lineHeight: '1' }}>
-                {value} <span style={{ fontSize: '0.9rem', color: '#999', fontWeight: '500' }}>{subValue}</span>
+            <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#333', lineHeight: '1' }}>
+                {value} <span style={{ fontSize: '1rem', color: '#aaa', fontWeight: '500' }}>{subValue}</span>
             </div>
         </div>
     </Card>
@@ -37,7 +38,7 @@ const SummaryStats = ({ tasks }) => {
     const pendingCount = tasks.filter(t => !t.isCompleted).length;
 
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '25px', marginBottom: '25px' }}>
             <StatCard 
                 icon={<FaHourglassHalf />} 
                 color="#ffc107" 

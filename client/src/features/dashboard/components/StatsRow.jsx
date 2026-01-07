@@ -1,30 +1,31 @@
 import React from 'react';
 import Card from '../../../components/ui/Card';
-import { FaFire, FaCheckCircle, FaHourglassHalf, FaClock } from 'react-icons/fa';
+import { FaFire, FaCheckCircle, FaHourglassHalf } from 'react-icons/fa';
 import LiveClockCard from './LiveClockCard';
 
 const StatCard = ({ icon, color, label, value, subValue }) => (
     <Card style={{ 
-        padding: '15px 20px', 
+        padding: '20px 25px', 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '15px', 
-        minHeight: '90px',
-        borderLeft: `4px solid ${color}`
+        gap: '20px', 
+        minHeight: '100px',
+        // Removed borderLeft
     }}>
         <div style={{
-            width: '45px', height: '45px', borderRadius: '12px', 
-            backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', 
-            justifyContent: 'center', fontSize: '1.2rem', color: color
+            width: '50px', height: '50px', borderRadius: '14px', 
+            backgroundColor: `${color}15`, // 15 is hex alpha for ~8% opacity
+            display: 'flex', alignItems: 'center', 
+            justifyContent: 'center', fontSize: '1.4rem', color: color
         }}>
             {icon}
         </div>
         <div>
-            <span style={{ fontSize: '0.85rem', color: '#666', display: 'block', marginBottom: '2px', fontWeight: '600' }}>
+            <span style={{ fontSize: '0.9rem', color: '#888', display: 'block', marginBottom: '4px', fontWeight: '600' }}>
                 {label}
             </span>
-            <div style={{ fontSize: '1.4rem', fontWeight: '800', color: '#333', lineHeight: '1' }}>
-                {value} <span style={{ fontSize: '0.9rem', color: '#999', fontWeight: '500' }}>{subValue}</span>
+            <div style={{ fontSize: '1.6rem', fontWeight: '800', color: '#333', lineHeight: '1' }}>
+                {value} <span style={{ fontSize: '1rem', color: '#aaa', fontWeight: '500' }}>{subValue}</span>
             </div>
         </div>
     </Card>
@@ -48,7 +49,7 @@ const StatsRow = ({ tasks }) => {
     const pendingCount = todayTasks.filter(t => !t.isCompleted).length;
 
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', width: '100%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '25px', width: '100%' }}>
             <LiveClockCard />
             
             <StatCard 

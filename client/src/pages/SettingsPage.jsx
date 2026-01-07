@@ -1,5 +1,6 @@
 import React from 'react';
-import { cardStyle, buttonPrimary, colors, gradientText } from '../components/ui/DesignSystem';
+import Card from '../components/ui/Card'; // Import Card component
+import { buttonPrimary, colors, gradientText } from '../components/ui/DesignSystem';
 
 const SettingsPage = ({ user }) => {
     const userName = user?.name || 'User';
@@ -13,7 +14,7 @@ const SettingsPage = ({ user }) => {
                 <p style={styles.subtitle}>Manage your account and preferences</p>
             </div>
 
-            <div style={cardStyle}>
+            <Card style={{ marginBottom: '24px' }}>
                 <h3 style={styles.sectionTitle}>👤 Profile</h3>
                 <div style={styles.row}>
                     <label style={styles.label}>Name</label>
@@ -24,9 +25,9 @@ const SettingsPage = ({ user }) => {
                     <input type="email" value="user@example.com" disabled style={styles.input} />
                 </div>
                 <button style={{...buttonPrimary, marginTop: '20px'}}>Update Profile</button>
-            </div>
+            </Card>
 
-            <div style={{...cardStyle, marginTop: '24px'}}>
+            <Card style={{ marginBottom: '24px' }}>
                 <h3 style={styles.sectionTitle}>🔔 Notifications</h3>
                 <div style={styles.checkboxRow}>
                     <input type="checkbox" id="emailNotif" defaultChecked style={styles.checkbox} />
@@ -36,9 +37,9 @@ const SettingsPage = ({ user }) => {
                     <input type="checkbox" id="pushNotif" style={styles.checkbox} />
                     <label htmlFor="pushNotif" style={styles.checkboxLabel}>Push Notifications</label>
                 </div>
-            </div>
+            </Card>
 
-            <div style={{...cardStyle, marginTop: '24px'}}>
+            <Card>
                 <h3 style={styles.sectionTitle}>🎨 Appearance</h3>
                 <div style={styles.row}>
                     <label style={styles.label}>Theme</label>
@@ -48,7 +49,7 @@ const SettingsPage = ({ user }) => {
                         <option>System</option>
                     </select>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 };
@@ -58,7 +59,7 @@ const styles = {
         padding: '40px',
         maxWidth: '800px',
         margin: '0 auto',
-        background: colors.background,
+        // Removed background color to let global gradient show through
         height: '100%',
         overflowY: 'auto'
     },

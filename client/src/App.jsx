@@ -121,7 +121,7 @@ function App() {
     }} />;
 
     return (
-        <div className="app-layout" style={{display: 'flex', height: '100vh', overflow: 'hidden'}}>
+        <div className="app-layout" style={styles.appContainer}>
             
             <Sidebar 
                 currentView={currentView} 
@@ -129,7 +129,7 @@ function App() {
                 onLogout={handleLogout} 
             />
 
-            <div style={{flex: 1, position: 'relative', backgroundColor: '#f4f6f9', overflow: 'hidden'}}>
+            <div style={styles.mainContent}>
                 {renderContent()}
 
                 {currentView !== 'dashboard' && (
@@ -166,6 +166,22 @@ function App() {
         </div>
     );
 }
+
+const styles = {
+    appContainer: {
+        display: 'flex',
+        height: '100vh',
+        overflow: 'hidden',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', // Global Gradient
+    },
+    mainContent: {
+        flex: 1,
+        position: 'relative',
+        backgroundColor: 'transparent', // Transparent to show gradient
+        overflow: 'hidden',
+        // No padding here, individual pages handle their own padding/layout
+    }
+};
 
 const fabStyle = {
     position: 'absolute',

@@ -3,6 +3,7 @@ import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { format, parse, startOfWeek, getDay, addHours, startOfDay, endOfDay, addDays } from 'date-fns';
 import { enUS } from 'date-fns/locale';
+import Card from '../../../components/ui/Card'; // Import Card component
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
@@ -163,8 +164,12 @@ const CalendarView = ({ tasks, onDateSelect, onEventDrop, onEventClick, unified 
         };
     };
 
+    // Use Card component for the wrapper to get the "White Card" style
+    const CalendarWrapper = unified ? 'div' : Card;
+    const wrapperProps = unified ? { style: styles.calendarWrapperUnified } : { style: { height: '100%', display: 'flex', flexDirection: 'column', padding: '20px' } };
+
     return (
-        <div style={unified ? styles.calendarWrapperUnified : styles.calendarWrapper}>
+        <CalendarWrapper {...wrapperProps}>
             <DnDCalendar
                 localizer={localizer}
                 events={events}
@@ -179,7 +184,7 @@ const CalendarView = ({ tasks, onDateSelect, onEventDrop, onEventClick, unified 
 
                 eventPropGetter={eventStyleGetter}
                 components={{ toolbar: CustomToolbar }}
-                style={{ height: '100%' }} // Always 100% height to fill container
+                style={{ height: '100%', backgroundColor: 'white' }} // Ensure white bg for calendar itself
 
                 selectable={true}
                 resizable={true}
@@ -191,21 +196,12 @@ const CalendarView = ({ tasks, onDateSelect, onEventDrop, onEventClick, unified 
 
                 dayPropGetter={() => ({ style: { cursor: 'pointer' } })}
             />
-        </div>
+        </CalendarWrapper>
     );
 };
 
 const styles = {
-    calendarWrapper: { 
-        backgroundColor: 'white', 
-        padding: '32px', 
-        borderRadius: '16px', 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.05)', 
-        border: 'none',
-        height: '100%', 
-        display: 'flex',
-        flexDirection: 'column'
-    },
+    // Styles are now handled by Card component or inline overrides
     calendarWrapperUnified: { 
         backgroundColor: 'transparent', 
         padding: '0', 
@@ -250,7 +246,7 @@ const styles = {
     todayBtn: { 
         backgroundColor: '#f1f3f5', 
         border: '1px solid #e0e0e0', 
-        borderRadius: '50px', 
+        borderRadius: '20px', // Rounded corners
         padding: '8px 16px', 
         cursor: 'pointer', 
         fontWeight: '600', 
@@ -271,13 +267,13 @@ const styles = {
         gap: '4px', 
         backgroundColor: '#f1f3f5', 
         padding: '4px', 
-        borderRadius: '12px' 
+        borderRadius: '20px' // Rounded corners for the group container
     },
     viewBtn: { 
         border: 'none', 
         background: 'transparent', 
         padding: '7px 14px', 
-        borderRadius: '8px', 
+        borderRadius: '16px', // Rounded corners for buttons
         fontSize: '0.8125rem', 
         color: '#666', 
         cursor: 'pointer', 
@@ -290,7 +286,7 @@ const styles = {
         border: 'none', 
         background: 'white', 
         padding: '7px 14px', 
-        borderRadius: '8px', 
+        borderRadius: '16px', // Rounded corners for active button
         fontSize: '0.8125rem', 
         color: '#007bff', 
         cursor: 'pointer', 
