@@ -76,7 +76,7 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
         if (!title.trim()) return;
 
         const finalStartDate = combineDateTime(dateStr, timeStr);
-        const finalEndDate = showEndTime ? combineDateTime(dateStr, endTimeStr) : null; 
+        const finalEndDate = showEndTime ? combineDateTime(dateStr, endTimeStr) : null;
 
         const taskData = {
             title, description: desc, location, tags, priority,
@@ -123,14 +123,14 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                 <form onSubmit={handleSubmit} style={styles.form}>
                     
                     {/* Main Inputs */}
-                    <input 
-                        type="text" placeholder="What needs to be done?" 
-                        value={title} onChange={(e) => setTitle(e.target.value)} 
+                    <input
+                        type="text" placeholder="What needs to be done?"
+                        value={title} onChange={(e) => setTitle(e.target.value)}
                         style={styles.mainInput} autoFocus
                     />
-                    <textarea 
-                        placeholder="Add details..." 
-                        value={desc} onChange={(e) => setDesc(e.target.value)} 
+                    <textarea
+                        placeholder="Add details..."
+                        value={desc} onChange={(e) => setDesc(e.target.value)}
                         style={styles.descInput} rows={2}
                     />
 
@@ -167,7 +167,7 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                             <label style={styles.label}>Priority</label>
                             <div style={styles.pills}>
                                 {['Low', 'Medium', 'High'].map(p => (
-                                    <button key={p} type="button" onClick={() => setPriority(p)} 
+                                    <button key={p} type="button" onClick={() => setPriority(p)}
                                         style={{...styles.pill, ...(priority === p ? styles[`pill${p}`] : {})}}>
                                         {p}
                                     </button>
@@ -209,7 +209,7 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                         </div>
                         <div style={styles.addSubtask}>
                             <input 
-                                type="text" placeholder="Add subtask manually..." 
+                                type="text" placeholder="Add subtask manually..."
                                 value={manualStep} onChange={e => setManualStep(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addManualStep())}
                                 style={styles.subInput} 
