@@ -5,6 +5,7 @@ import TaskList from '../features/tasks/components/TaskList';
 import TaskFilters from '../features/tasks/components/TaskFilters'; 
 import TaskForm from '../features/tasks/components/TaskForm'; 
 import Card from '../components/ui/Card';
+import { isToday, isThisWeek, isThisMonth, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
 const WorkPage = ({ onDateSelect, onEventDrop, onEventClick }) => { 
     const { tasks, updateTask, deleteTask } = useTaskContext();
@@ -12,19 +13,72 @@ const WorkPage = ({ onDateSelect, onEventDrop, onEventClick }) => {
     const [filters, setFilters] = useState({
         status: 'all',
         priority: 'all',
-        tags: []
+        tags: [],
+        search: '',
+        date: 'all', // 'today', 'week', 'month', 'custom'
+        customStartDate: '',
+        customEndDate: ''
     });
 
     const [editingTask, setEditingTask] = useState(null);
 
     const filteredTasks = tasks.filter(task => {
+        // Status Filter
         if (filters.status === 'active' && task.isCompleted) return false;
         if (filters.status === 'completed' && !task.isCompleted) return false;
+        
+        // Priority Filter
         if (filters.priority !== 'all' && task.priority !== filters.priority) return false;
+        
+        // Tags Filter
         if (filters.tags.length > 0) {
             const hasTag = task.tags && task.tags.some(t => filters.tags.includes(t));
             if (!hasTag) return false;
         }
+
+        // Search Filter
+        if (filters.search) {
+            const searchLower = filters.search.toLowerCase();
+            if (!task.title.toLowerCase().includes(searchLower)) return false;
+        }
+
+        // Date/Timeframe Filter
+        if (filters.date && filters.date !== 'all') {
+            if (!task.dueDate) return false;
+            const taskDate = new Date(task.dueDate);
+
+            switch (filters.date) {
+                case 'today':
+                    if (!isToday(taskDate)) return false;
+                    break;
+                case 'week':
+                    if (!isThisWeek(taskDate, { weekStartsOn: 0 })) return false;
+                    break;
+                case 'month':
+                    if (!isThisMonth(taskDate)) return false;
+                    break;
+                case 'custom':
+                    if (filters.customStartDate && filters.customEndDate) {
+                        const start = startOfDay(new Date(filters.customStartDate));
+                        const end = endOfDay(new Date(filters.customEndDate));
+                        
+                        // Check if task date is within the range [start, end]
+                        if (!isWithinInterval(taskDate, { start, end })) return false;
+                    } else if (filters.customStartDate) {
+                         // Only start date provided
+                         const start = startOfDay(new Date(filters.customStartDate));
+                         if (taskDate < start) return false;
+                    } else if (filters.customEndDate) {
+                        // Only end date provided
+                        const end = endOfDay(new Date(filters.customEndDate));
+                        if (taskDate > end) return false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
         return true;
     });
 
@@ -53,6 +107,7 @@ const WorkPage = ({ onDateSelect, onEventDrop, onEventClick }) => {
                         setFilters={setFilters}
                         selectedDate={null} 
                         onClearDate={() => {}}
+                        showTitle={true}
                     />
                 </div>
 
@@ -119,7 +174,7 @@ const styles = {
     
     filtersSection: {
         flexShrink: 0,
-        maxHeight: '40%',
+        maxHeight: '60%',
         overflowY: 'auto',
         padding: '20px'
     },
