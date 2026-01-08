@@ -33,7 +33,8 @@ const TaskDrawer = ({ isOpen, onClose, task, onUpdate, onDelete }) => {
                         <TaskItem 
                             task={task} 
                             onUpdate={onUpdate} 
-                            onDelete={(id) => { onDelete(id); onClose(); }} 
+                            // FIXED: Pass the full task object to onDelete instead of just the ID
+                            onDelete={() => { onDelete(task); onClose(); }}
                         />
                     ) : (
                         <p style={{padding: '20px', color: '#999'}}>No task selected</p>

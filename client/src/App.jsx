@@ -13,7 +13,8 @@ import TaskForm from './features/tasks/components/TaskForm';
 import Login from './features/auth/Login';
 import { authService } from './services/authService';
 import { FaPlus } from 'react-icons/fa';
-import ConfirmationModal from './components/ui/ConfirmationModal'; // Import the new modal
+import ConfirmationModal from './components/ui/ConfirmationModal';
+import DeleteRecurringModal from './components/ui/DeleteRecurringModal';
 import './index.css';
 
 // --- רכיב פנימי שמנהל את הניווט אחרי התחברות ---
@@ -26,16 +27,17 @@ const AppLayout = ({ user, onLogout }) => {
     const currentPath = location.pathname.replace('/', '');
     const currentView = currentPath === '' || currentPath === 'dashboard' ? 'dashboard' : currentPath;
 
-    const { addTask, updateTask, deleteTask } = useTaskContext();
+    const { tasks, addTask, updateTask, deleteTask } = useTaskContext();
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
 
-    // State for delete confirmation modal
+    // State for delete confirmation modals
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [taskToDeleteId, setTaskToDeleteId] = useState(null);
+    const [isRecurringDeleteModalOpen, setIsRecurringDeleteModalOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
 
     // פונקציית גישור: כשהסרגל הצדדי מבקש לשנות מסך, אנחנו משנים את ה-URL
     const handleViewChange = (view) => {
@@ -60,20 +62,66 @@ const AppLayout = ({ user, onLogout }) => {
         }
     };
 
-    // Modified delete handler to open modal instead of deleting immediately
-    const handleRequestDelete = (taskId) => {
-        setTaskToDeleteId(taskId);
-        setIsDeleteModalOpen(true);
+    // Modified delete handler to check for recurrence
+    const handleRequestDelete = (taskOrId) => {
+        console.log("🗑️ handleRequestDelete called with:", taskOrId);
+
+        // Protection: If we received an Event object by mistake - ignore it
+        if (taskOrId && taskOrId.preventDefault) {
+            console.error("❌ Error: Received Event object instead of Task ID");
+            return;
+        }
+
+        let task = null;
+        
+        // Case A: Received ID as string (most common)
+        if (typeof taskOrId === 'string') {
+            task = tasks.find(t => t._id === taskOrId);
+        }
+        // Case B: Received full task object (has _id field)
+        else if (typeof taskOrId === 'object' && taskOrId !== null && taskOrId._id) {
+            task = taskOrId;
+        }
+        
+        // Check if we found a valid task to delete
+        if (task) {
+            setTaskToDelete(task);
+            if (task.recurrence && task.recurrence !== 'none') {
+                setIsRecurringDeleteModalOpen(true);
+            } else {
+                setIsDeleteModalOpen(true);
+            }
+        } else if (typeof taskOrId === 'string') {
+             // Fallback if task not found in list (e.g. calendar view might have different data source or sync issue)
+             console.warn("⚠️ Task not found in list, assuming single delete for ID:", taskOrId);
+             setTaskToDelete({ _id: taskOrId });
+             setIsDeleteModalOpen(true);
+        } else {
+             console.error("⚠️ Could not find task to delete for input:", taskOrId);
+        }
     };
 
-    // Actual delete function called by modal
+    // Actual delete function called by simple modal
     const handleConfirmDelete = async () => {
-        if (taskToDeleteId) {
-            await deleteTask(taskToDeleteId);
+        if (taskToDelete) {
+            // Ensure we have a string ID
+            const id = typeof taskToDelete._id === 'object' ? taskToDelete._id.toString() : taskToDelete._id;
+            await deleteTask(id);
             setIsDrawerOpen(false); // Close drawer if open
         }
         setIsDeleteModalOpen(false);
-        setTaskToDeleteId(null);
+        setTaskToDelete(null);
+    };
+
+    // Delete function for recurring tasks
+    const handleConfirmRecurringDelete = async (deletePolicy) => {
+        if (taskToDelete) {
+            const id = typeof taskToDelete._id === 'object' ? taskToDelete._id.toString() : taskToDelete._id;
+            await deleteTask(id, deletePolicy);
+            setIsDrawerOpen(false);
+        }
+        setIsRecurringDeleteModalOpen(false);
+        setTaskToDelete(null);
     };
 
     const handleEventDrop = async ({ event, start, end }) => {
@@ -104,6 +152,7 @@ const AppLayout = ({ user, onLogout }) => {
                             }}
                             onEventDrop={handleEventDrop}
                             onEventClick={handleTaskClick}
+                            onRequestDelete={handleRequestDelete}
                         />
                     } />
 
@@ -146,16 +195,25 @@ const AppLayout = ({ user, onLogout }) => {
                     setSelectedDate(null);
                 }}
                 onAdd={handleAddTask}
+                onRequestDelete={handleRequestDelete} // FIXED: Changed prop name from onDelete to onRequestDelete
+                onUpdate={handleUpdateTask}
+                taskToEdit={selectedTask}
                 initialDate={selectedDate}
             />
 
-            {/* Confirmation Modal */}
+            {/* Confirmation Modal for single tasks */}
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
                 title="Delete Task?"
-                message="Are you sure you want to delete this task? This action cannot be undone."
+            />
+
+            {/* New Modal for recurring tasks */}
+            <DeleteRecurringModal
+                isOpen={isRecurringDeleteModalOpen}
+                onClose={() => setIsRecurringDeleteModalOpen(false)}
+                onConfirm={handleConfirmRecurringDelete}
             />
         </div>
     );
@@ -171,6 +229,7 @@ function App() {
     useEffect(() => {
         const savedToken = authService.getToken();
         if (savedToken) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setToken(savedToken);
             setUser({ name: authService.getUserName() });
         }

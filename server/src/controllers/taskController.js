@@ -115,8 +115,26 @@ const updateTask = asyncHandler(async (req, res) => {
 });
 
 const deleteTask = asyncHandler(async (req, res) => {
-    const result = await taskService.deleteTask(req.user.id, req.params.id);
-    res.status(200).json(result);
+    const { scope } = req.query;
+    const task = await Task.findById(req.params.id);
+
+    if (!task) {
+        res.status(404);
+        throw new Error('Task not found');
+    }
+
+    if (task.user.toString() !== req.user.id) {
+        res.status(401);
+        throw new Error('User not authorized');
+    }
+
+    if (scope === 'series' && task.recurrenceId) {
+        await Task.deleteMany({ recurrenceId: task.recurrenceId, user: req.user.id });
+        res.status(200).json({ message: 'Series deleted', id: req.params.id });
+    } else {
+        await task.deleteOne();
+        res.status(200).json({ id: req.params.id });
+    }
 });
 
 const generateAiSuggestions = asyncHandler(async (req, res) => {

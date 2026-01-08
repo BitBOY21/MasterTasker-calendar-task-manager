@@ -7,7 +7,7 @@ import TaskForm from '../features/tasks/components/TaskForm';
 import Card from '../components/ui/Card';
 import { isToday, isThisWeek, isThisMonth, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
-const WorkPage = ({ onDateSelect, onEventDrop, onEventClick }) => { 
+const WorkPage = ({ onDateSelect, onEventDrop, onEventClick, onRequestDelete }) => { 
     const { tasks, updateTask, deleteTask } = useTaskContext();
     
     const [filters, setFilters] = useState({
@@ -133,7 +133,7 @@ const WorkPage = ({ onDateSelect, onEventDrop, onEventClick }) => {
                     taskToEdit={editingTask}
                     onClose={() => setEditingTask(null)}
                     onUpdate={updateTask}
-                    onDelete={deleteTask}
+                    onRequestDelete={onRequestDelete}
                     onAdd={() => {}} 
                 />
             )}

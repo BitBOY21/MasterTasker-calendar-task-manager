@@ -8,7 +8,7 @@ const TAG_OPTIONS = [
     "Study 📚", "Urgent 🔥", "Family 👨‍👩‍👧‍👦", "Errands 🏃"
 ];
 
-const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, initialDate }) => {
+const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdit, initialDate }) => {
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
     const [priority, setPriority] = useState('Medium');
@@ -28,9 +28,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
     
     const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
     const tagsDropdownRef = useRef(null);
-
-    // Confirmation Modal State
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     // Helper to format date as YYYY-MM-DD using local time
     const toLocalDateString = (date) => {
@@ -181,18 +178,17 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
         return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long' });
     };
 
-    // Handle delete button click
+    // Handle delete button click - delegate to parent handler which manages modals
     const handleDeleteClick = () => {
-        setIsDeleteModalOpen(true);
-    };
-
-    // Handle confirm delete
-    const handleConfirmDelete = () => {
         if (taskToEdit) {
-            onDelete(taskToEdit._id);
+            // Use the new prop name to ensure we call the right function
+            if (onRequestDelete) {
+                onRequestDelete(taskToEdit); 
+            } else {
+                console.error("onRequestDelete prop is missing in TaskForm");
+            }
             onClose();
         }
-        setIsDeleteModalOpen(false);
     };
 
     if (!isOpen) return null;
@@ -415,14 +411,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                     </button>
                 </form>
             </div>
-
-            {/* Confirmation Modal */}
-            <ConfirmationModal
-                isOpen={isDeleteModalOpen}
-                onClose={() => setIsDeleteModalOpen(false)}
-                onConfirm={handleConfirmDelete}
-                title="Delete Task?"
-            />
         </div>
     );
 };
@@ -555,7 +543,7 @@ const styles = {
 
     // כפתורי אייקון קטנים (מחיקה, סגירה)
     iconBtn: {
-        background: 'none',
+        backgroundColor: 'transparent',
         border: 'none',
         fontSize: '1.1rem',
         cursor: 'pointer',
@@ -571,7 +559,7 @@ const styles = {
     // כפתור טקסט ללא מסגרת (הוספת תאריך סיום)
     timeRow: { display: 'flex', alignItems: 'center', gap: '8px' },
     linkBtn: {
-        background: 'none',
+        backgroundColor: 'transparent',
         border: 'none',
         color: '#007bff',
         fontSize: '0.85rem',
@@ -592,7 +580,7 @@ const styles = {
     pill: { 
         flex: 1, 
         border: 'none', 
-        background: 'transparent', 
+        backgroundColor: 'transparent', 
         padding: '7px 14px', 
         borderRadius: '10px',
         fontSize: '0.8125rem', 

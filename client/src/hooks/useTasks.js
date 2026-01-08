@@ -40,23 +40,6 @@ export const useTasks = () => {
         try {
             const createdTask = await taskService.create(newTask);
             
-            // If createdTask is an array (recurring tasks), spread it. If single object, wrap in array.
-            // Actually, the backend returns the *first* created task for recurring tasks (Scenario B),
-            // OR the single task for normal tasks (Scenario A).
-            // Wait, if it returns only the first task, the UI won't show the others until refresh!
-            
-            // Let's check the backend response.
-            // Scenario A: returns single task object.
-            // Scenario B: returns createdTasks[0] (single object).
-            
-            // So we need to refetch tasks to see all recurring instances, OR update backend to return all.
-            // Updating backend to return all is better, but might break frontend if it expects single object.
-            // The current frontend expects `createdTask` to be a single object and adds it to state.
-            
-            // If we added recurring tasks, we only see the first one.
-            // To fix this without changing backend signature too much:
-            // We can just trigger a refetch if it was a recurring task.
-            
             if (newTask.recurrence && newTask.recurrence !== 'none') {
                 await fetchTasks(); // Refetch to get all instances
             } else {
@@ -100,11 +83,42 @@ export const useTasks = () => {
     };
 
     // Delete Task
-    const deleteTask = async (id) => {
+    const deleteTask = async (id, deletePolicy) => {
         try {
-            // Optimistic Update
-            setTasks(prev => prev.filter(t => t._id !== id));
-            await taskService.delete(id);
+            console.log("🗑️ useTasks: Raw ID received:", id);
+
+            let safeId = id;
+            
+            // Handle object ID (e.g. if passed incorrectly)
+            if (typeof id === 'object' && id !== null) {
+                console.warn("⚠️ useTasks: Received object as ID, attempting to extract string ID");
+                if (id._id) {
+                    safeId = id._id.toString();
+                } else {
+                    safeId = id.toString();
+                }
+            }
+
+            // Final check
+            if (safeId === '[object Object]') {
+                console.error("❌ useTasks: Failed to extract valid ID. Aborting delete.");
+                return;
+            }
+
+            console.log("🗑️ useTasks: Deleting task with Safe ID:", safeId, "Policy:", deletePolicy);
+
+            // If deleting a series, we should refetch because multiple tasks might be deleted
+            if (deletePolicy === 'series') {
+                 await taskService.delete(safeId, deletePolicy);
+                 await fetchTasks();
+            } else {
+                // Optimistic Update for single delete
+                setTasks(prev => prev.filter(t => {
+                    const taskId = typeof t._id === 'string' ? t._id : t._id?.toString();
+                    return taskId !== safeId;
+                }));
+                await taskService.delete(safeId, deletePolicy);
+            }
         } catch (err) {
             console.error("Error deleting task:", err);
             fetchTasks(); // Revert

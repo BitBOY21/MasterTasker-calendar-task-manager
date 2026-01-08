@@ -34,7 +34,6 @@ const Sidebar = ({ currentView, onChangeView, onLogout }) => {
                                 background: currentView === item.id 
                                     ? 'linear-gradient(135deg, rgba(0,123,255,0.1), rgba(111,66,193,0.1))' 
                                     : 'transparent',
-                                backgroundColor: currentView === item.id ? '#e3f2fd' : 'transparent',
                                 color: currentView === item.id ? '#007bff' : '#666',
                                 fontWeight: currentView === item.id ? '600' : '500',
                                 boxShadow: currentView === item.id ? '0 2px 8px rgba(0,123,255,0.15)' : 'none'

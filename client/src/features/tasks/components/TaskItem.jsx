@@ -226,7 +226,18 @@ const TaskItem = ({ task, onDelete, onUpdate }) => {
             <div style={styles.rightSide}>
                 <div style={styles.hoverActions}>
                     <button onClick={() => setIsEditing(true)} style={styles.iconActionBtn} title="Edit"><FaEdit /></button>
-                    <button onClick={() => onDelete(task._id)} style={styles.iconActionBtn} title="Delete"><FaTrash /></button>
+                    <button 
+                        onClick={(e) => {
+                            e.stopPropagation(); // Prevent expanding the task
+                            // Ensure we send the ID as a string. If it's an object, convert it.
+                            const idToSend = typeof task._id === 'object' ? task._id.toString() : task._id;
+                            onDelete(idToSend); 
+                        }} 
+                        style={styles.iconActionBtn} 
+                        title="Delete"
+                    >
+                        <FaTrash />
+                    </button>
                 </div>
 
                 <span style={{
