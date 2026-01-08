@@ -10,13 +10,13 @@ const getAllTasks = async (userId) => {
 };
 
 const createTask = async (userId, taskData) => {
-    const { title, description, dueDate, endDate, location, tags, priority, subtasks } = taskData;
+    const { title, description, dueDate, endDate, location, tags, priority, subtasks, isAllDay, recurrence, recurrenceId } = taskData;
     
     const score = calculateUrgency(dueDate, priority);
     const lastTask = await Task.findOne({ user: userId }).sort({ order: -1 });
     const newOrder = lastTask && lastTask.order !== undefined ? lastTask.order + 1 : 1;
 
-    return await Task.create({
+    const newTaskData = {
         user: userId,
         title,
         description,
@@ -27,8 +27,16 @@ const createTask = async (userId, taskData) => {
         priority: priority || 'Medium',
         urgencyScore: score,
         order: newOrder,
-        subtasks: subtasks || []
-    });
+        subtasks: subtasks || [],
+        isAllDay: isAllDay || false,
+        recurrence: recurrence || 'none'
+    };
+
+    if (recurrenceId) {
+        newTaskData.recurrenceId = recurrenceId;
+    }
+
+    return await Task.create(newTaskData);
 };
 
 const updateTask = async (userId, taskId, updateData) => {
@@ -49,6 +57,9 @@ const updateTask = async (userId, taskId, updateData) => {
     if (updateData.tags !== undefined) task.tags = updateData.tags;
     if (updateData.subtasks) task.subtasks = updateData.subtasks; 
     if (updateData.aiSuggestions) task.aiSuggestions = updateData.aiSuggestions;
+    if (updateData.isAllDay !== undefined) task.isAllDay = updateData.isAllDay;
+    if (updateData.recurrence !== undefined) task.recurrence = updateData.recurrence;
+    if (updateData.recurrenceId !== undefined) task.recurrenceId = updateData.recurrenceId;
 
     // Recalculate urgency score
     task.urgencyScore = calculateUrgency(task.dueDate, task.priority);

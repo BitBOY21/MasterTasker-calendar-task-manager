@@ -22,7 +22,11 @@ const taskSchema = Joi.object({
             isCompleted: Joi.boolean()
         })
     ),
-    aiSuggestions: Joi.array().items(Joi.string())
+    aiSuggestions: Joi.array().items(Joi.string()),
+    // New fields
+    isAllDay: Joi.boolean(),
+    recurrence: Joi.string().allow('none', 'daily', 'weekly', 'monthly', 'yearly', ''),
+    recurrenceId: Joi.string().allow(null, '')
 });
 
 // Schema for updating a task (all fields are optional)
@@ -46,7 +50,11 @@ const taskUpdateSchema = Joi.object({
             isCompleted: Joi.boolean()
         })
     ),
-    aiSuggestions: Joi.array().items(Joi.string())
+    aiSuggestions: Joi.array().items(Joi.string()),
+    // New fields
+    isAllDay: Joi.boolean(),
+    recurrence: Joi.string().allow('none', 'daily', 'weekly', 'monthly', 'yearly', ''),
+    recurrenceId: Joi.string().allow(null, '')
 });
 
 const registerSchema = Joi.object({

@@ -30,6 +30,19 @@ const TaskSchema = new mongoose.Schema({
     endDate: {
         type: Date
     },
+    isAllDay: {
+        type: Boolean,
+        default: false
+    },
+    recurrence: {
+        type: String,
+        enum: ['none', 'daily', 'weekly', 'monthly', 'yearly'],
+        default: 'none'
+    },
+    recurrenceId: {
+        type: String,
+        default: null
+    },
     // --- Location ---
     location: {
         type: String,
