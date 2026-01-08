@@ -49,6 +49,12 @@ const AppLayout = ({ user, onLogout }) => {
         setIsDrawerOpen(true);
     };
 
+    // New handler specifically for opening the Edit Modal (TaskForm)
+    const handleEditTask = (task) => {
+        setSelectedTask(task);
+        setIsAddModalOpen(true); // Reusing the Add Modal for editing
+    };
+
     const handleAddTask = async (newTask) => {
         await addTask(newTask);
         setIsAddModalOpen(false);
@@ -142,7 +148,7 @@ const AppLayout = ({ user, onLogout }) => {
                 {/* הגדרת הנתיבים (Routes) במקום Switch Case */}
                 <Routes>
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                    <Route path="/dashboard" element={<DashboardPage onChangeView={handleViewChange} user={user} />} />
+                    <Route path="/dashboard" element={<DashboardPage onChangeView={handleViewChange} user={user} onRequestDelete={handleRequestDelete} />} />
 
                     <Route path="/calendar" element={
                         <WorkPage
@@ -156,8 +162,8 @@ const AppLayout = ({ user, onLogout }) => {
                         />
                     } />
 
-                    <Route path="/list" element={<AnalyticsPage user={user} />} />
-                    <Route path="/stats" element={<AnalyticsPage user={user} />} />
+                    <Route path="/list" element={<AnalyticsPage user={user} onRequestDelete={handleRequestDelete} onEditTask={handleEditTask} />} />
+                    <Route path="/stats" element={<AnalyticsPage user={user} onRequestDelete={handleRequestDelete} onEditTask={handleEditTask} />} />
                     <Route path="/history" element={<HistoryPage />} />
                     <Route path="/settings" element={<SettingsPage user={user} />} />
 
@@ -193,6 +199,7 @@ const AppLayout = ({ user, onLogout }) => {
                 onClose={() => {
                     setIsAddModalOpen(false);
                     setSelectedDate(null);
+                    setSelectedTask(null); // Clear selected task when closing
                 }}
                 onAdd={handleAddTask}
                 onRequestDelete={handleRequestDelete} // FIXED: Changed prop name from onDelete to onRequestDelete

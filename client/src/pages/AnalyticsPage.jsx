@@ -2,15 +2,15 @@ import React, { useState, useMemo } from 'react';
 import { useTaskContext } from '../context/TaskContext'; 
 import NewSummaryFilters from '../features/dashboard/NewSummaryFilters'; 
 import TaskForm from '../features/tasks/components/TaskForm'; 
+import TaskList from '../features/tasks/components/TaskList'; // Import TaskList
 import Card from '../components/ui/Card';
 import SummaryStats from '../features/analytics/components/summary/SummaryStats';
 import SummaryCharts from '../features/analytics/components/summary/SummaryCharts';
 import ActivityLog from '../features/analytics/components/summary/ActivityLog';
-import { FaEdit, FaTrash, FaCheck } from 'react-icons/fa';
 import { isToday, isThisWeek, isThisMonth, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
-const AnalyticsPage = ({ user }) => { 
-    const { tasks, updateTask, deleteTask } = useTaskContext();
+const AnalyticsPage = ({ user, onRequestDelete, onEditTask }) => { 
+    const { tasks, updateTask, deleteTask, generateAI } = useTaskContext();
     const userName = user?.name || 'User';
     
     // Filter States
@@ -109,6 +109,15 @@ const AnalyticsPage = ({ user }) => {
         setSortBy('date_desc');
     };
 
+    // Use the passed onEditTask or fallback to local state (though onEditTask from App is preferred for consistency)
+    const handleEdit = (task) => {
+        if (onEditTask) {
+            onEditTask(task);
+        } else {
+            setEditingTask(task);
+        }
+    };
+
     return (
         <div style={styles.container}>
             <div style={styles.header}>
@@ -141,44 +150,13 @@ const AnalyticsPage = ({ user }) => {
                 
                 <div style={styles.scrollableList}>
                     {filteredTasks.length > 0 ? (
-                        filteredTasks.slice(0, visibleTasksCount).map(task => (
-                            <div key={task._id} style={styles.taskRow}>
-                                <button 
-                                    onClick={() => updateTask(task._id, { isCompleted: !task.isCompleted })}
-                                    style={{
-                                        ...styles.checkBtn,
-                                        backgroundColor: task.isCompleted ? '#4caf50' : 'transparent',
-                                        borderColor: task.isCompleted ? '#4caf50' : '#ccc'
-                                    }}
-                                >
-                                    {task.isCompleted && <FaCheck color="white" size={10} />}
-                                </button>
-
-                                <div style={styles.taskInfo}>
-                                    <span style={{
-                                        ...styles.taskTitle,
-                                        textDecoration: task.isCompleted ? 'line-through' : 'none',
-                                        color: task.isCompleted ? '#999' : '#333'
-                                    }}>
-                                        {task.title}
-                                    </span>
-                                    <span style={styles.taskDate}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : ''}</span>
-                                </div>
-
-                                <span style={{
-                                    ...styles.tag, 
-                                    backgroundColor: task.priority === 'High' ? '#ffebee' : '#e3f2fd',
-                                    color: task.priority === 'High' ? '#c62828' : '#1565c0'
-                                }}>
-                                    {task.priority}
-                                </span>
-
-                                <div style={styles.actions}>
-                                    <button onClick={() => setEditingTask(task)} style={styles.iconBtn} title="Edit"><FaEdit /></button>
-                                    <button onClick={() => { if(window.confirm('Delete?')) deleteTask(task._id) }} style={{...styles.iconBtn, color: '#dc3545'}} title="Delete"><FaTrash /></button>
-                                </div>
-                            </div>
-                        ))
+                        <TaskList
+                            tasks={filteredTasks.slice(0, visibleTasksCount)}
+                            onDelete={onRequestDelete || deleteTask}
+                            onUpdate={updateTask}
+                            onGenerateAI={generateAI}
+                            onEdit={handleEdit}
+                        />
                     ) : <p style={styles.emptyText}>No tasks match your filters.</p>}
                     
                     {filteredTasks.length > visibleTasksCount && (
@@ -193,13 +171,17 @@ const AnalyticsPage = ({ user }) => {
 
             <ActivityLog tasks={tasks} />
 
-            <TaskForm 
-                isOpen={!!editingTask} 
-                onClose={() => setEditingTask(null)}
-                onUpdate={updateTask}
-                onDelete={deleteTask}
-                taskToEdit={editingTask}
-            />
+            {/* Only render local TaskForm if we are managing editing locally (fallback) */}
+            {editingTask && !onEditTask && (
+                <TaskForm 
+                    isOpen={!!editingTask} 
+                    onClose={() => setEditingTask(null)}
+                    onUpdate={updateTask}
+                    onRequestDelete={onRequestDelete}
+                    onDelete={deleteTask}
+                    taskToEdit={editingTask}
+                />
+            )}
         </div>
     );
 };
@@ -214,17 +196,7 @@ const styles = {
     
     filtersWrapper: { marginBottom: '20px', paddingBottom: '15px', borderBottom: '1px solid #f0f0f0' },
 
-    scrollableList: { maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' },
-
-    taskRow: { display: 'flex', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #f0f0f0', gap: '15px' },
-    checkBtn: { width: '20px', height: '20px', borderRadius: '50%', border: '2px solid #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 },
-    taskInfo: { flex: 1, display: 'flex', flexDirection: 'column' },
-    taskTitle: { fontSize: '1rem', fontWeight: '500' },
-    taskDate: { fontSize: '0.8rem', color: '#888' },
-    tag: { padding: '4px 10px', borderRadius: '10px', fontSize: '0.75rem', fontWeight: '600' },
-    
-    actions: { display: 'flex', gap: '8px', opacity: 0.6, transition: 'opacity 0.2s' },
-    iconBtn: { background: 'none', border: 'none', cursor: 'pointer', color: '#666', fontSize: '0.9rem' },
+    scrollableList: { maxHeight: '500px', overflowY: 'auto', paddingRight: '5px' }, // Increased height for better view
 
     moreText: { textAlign: 'center', marginTop: '20px', color: '#007bff', fontSize: '0.95rem', cursor: 'pointer', fontWeight: '600', transition: 'color 0.2s ease' },
     emptyText: { textAlign: 'center', color: '#999', fontStyle: 'italic', padding: '20px' },
