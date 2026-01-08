@@ -80,6 +80,13 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
         };
     }, []);
 
+    // Effect to handle Repeat locking when End Date is selected
+    useEffect(() => {
+        if (showEndDate) {
+            setRecurrence('none');
+        }
+    }, [showEndDate]);
+
     const resetForm = () => {
         setTitle(''); setDesc(''); setLocation(''); setTags([]);
         setTimeStr(''); setEndTimeStr(''); setShowEndTime(false);
@@ -198,13 +205,19 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                         </div>
                         <div style={styles.field}>
                             <label style={styles.label}><FaRedo /> Repeat</label>
-                            <select value={recurrence} onChange={e => setRecurrence(e.target.value)} style={styles.input}>
-                                <option value="none">Does not repeat</option>
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly on {getDayName()}</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="yearly">Yearly</option>
-                            </select>
+                            {showEndDate ? (
+                                <div style={{...styles.input, color: '#999', backgroundColor: '#f1f3f5', display: 'flex', alignItems: 'center'}}>
+                                    Does not repeat
+                                </div>
+                            ) : (
+                                <select value={recurrence} onChange={e => setRecurrence(e.target.value)} style={styles.input}>
+                                    <option value="none">Does not repeat</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly on {getDayName()}</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            )}
                         </div>
                     </div>
 
