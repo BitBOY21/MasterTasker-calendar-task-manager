@@ -119,7 +119,8 @@ const WorkPage = ({ onDateSelect, onEventDrop, onEventClick, onRequestDelete }) 
                         <TaskList
                             tasks={filteredTasks}
                             onUpdate={updateTask}
-                            onDelete={deleteTask}
+                            onDelete={onRequestDelete || deleteTask} // Use onRequestDelete if available
+                            onEdit={handleEventClick} // Pass handleEventClick as onEdit
                             onDragEnd={() => {}}
                         />
                     </div>
@@ -133,7 +134,8 @@ const WorkPage = ({ onDateSelect, onEventDrop, onEventClick, onRequestDelete }) 
                     taskToEdit={editingTask}
                     onClose={() => setEditingTask(null)}
                     onUpdate={updateTask}
-                    onRequestDelete={onRequestDelete}
+                    onRequestDelete={onRequestDelete} // Pass onRequestDelete to TaskForm
+                    onDelete={deleteTask} // Fallback
                     onAdd={() => {}}
                 />
             )}
