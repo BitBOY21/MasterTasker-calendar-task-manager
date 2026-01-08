@@ -422,7 +422,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
                 title="Delete Task?"
-                message="Are you sure you want to delete this task? This action cannot be undone."
             />
         </div>
     );
