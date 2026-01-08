@@ -28,6 +28,16 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
     const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
     const tagsDropdownRef = useRef(null);
 
+    // Helper to format date as YYYY-MM-DD using local time
+    const toLocalDateString = (date) => {
+        if (!date) return '';
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     useEffect(() => {
         if (isOpen) {
             if (taskToEdit) {
@@ -41,8 +51,8 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                 setRecurrence(taskToEdit.recurrence || 'none');
 
                 if (taskToEdit.dueDate) {
+                    setDateStr(toLocalDateString(taskToEdit.dueDate));
                     const d = new Date(taskToEdit.dueDate);
-                    setDateStr(d.toISOString().slice(0, 10));
                     setTimeStr(d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }));
                 }
                 if (taskToEdit.endDate) {
@@ -53,7 +63,7 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                     const isSameDay = d.toDateString() === startDate.toDateString();
                     
                     if (!isSameDay) {
-                        setEndDateStr(d.toISOString().slice(0, 10));
+                        setEndDateStr(toLocalDateString(taskToEdit.endDate));
                         setShowEndDate(true);
                     }
                     
@@ -62,8 +72,9 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onDelete, taskToEdit, init
                 }
             } else {
                 resetForm();
+                // Use initialDate if provided, otherwise default to today
                 const d = initialDate ? new Date(initialDate) : new Date();
-                setDateStr(d.toISOString().slice(0, 10));
+                setDateStr(toLocalDateString(d));
             }
         }
     }, [isOpen, taskToEdit, initialDate]);
