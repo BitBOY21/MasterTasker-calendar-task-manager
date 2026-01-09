@@ -320,13 +320,13 @@ const styles = {
         display: 'flex',
         flexWrap: 'wrap', // מאפשר שבירת שורות אם התוכן ארוך
         alignItems: 'flex-start', // יישור למעלה (חשוב כשיש תיאור ארוך)
-        padding: '12px 16px', // ריווח פנימי נוח
+        padding: '4px ', // ריווח פנימי נוח
         borderBottom: '1px solid #f0f0f0', // קו מפריד עדין בין משימות
         backgroundColor: 'white',
         transition: 'background-color 0.2s ease', // אנימציה חלקה ב-Hover
         position: 'relative',
         cursor: 'pointer', // מראה שזה לחיץ
-        gap: '12px' // מרווח בין האלמנטים (צ'קבוקס, תוכן, כפתורים)
+        gap: '6px' // מרווח בין האלמנטים (צ'קבוקס, תוכן, כפתורים)
     },
     
     // עיגול הצ'קבוקס (לסימון בוצע/לא בוצע)
@@ -366,7 +366,7 @@ const styles = {
     metaRow: {
         display: 'flex',
         alignItems: 'center',
-        gap: '12px', // מרווח בין הפריטים השונים
+        gap: '6px', // מרווח בין הפריטים השונים
         fontSize: '0.75rem', // טקסט קטן יותר למידע משני
         color: '#666',
         flexWrap: 'wrap' // יורד שורה אם אין מקום
@@ -386,14 +386,14 @@ const styles = {
     metaItem: {
         display: 'flex',
         alignItems: 'center',
-        gap: '4px'
+        gap: '2px'
     },
 
     // כפתורי הפעולה בצד ימין (עריכה, מחיקה)
     rightActions: {
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
+        gap: '2px',
         opacity: 0.6, // שקוף חלקית כברירת מחדל (פחות בולט)
         transition: 'opacity 0.2s'
     },
@@ -460,10 +460,10 @@ const styles = {
     subtaskRow: { 
         display: 'flex', 
         alignItems: 'center', 
-        gap: '10px', 
+        gap: '6px',
         marginBottom: '6px', 
         cursor: 'pointer', 
-        padding: '4px 0' 
+        padding: '0px 0'
     },
     miniCheck: { 
         width: '16px', 
@@ -478,7 +478,7 @@ const styles = {
     // --- Edit Mode Styles (מצב עריכה מהירה) ---
     
     editContainer: { 
-        padding: '15px', 
+        padding: '15px',
         border: '1px solid #007bff', // מסגרת כחולה שמסמנת עריכה
         borderRadius: '8px', 
         backgroundColor: '#fff', 
