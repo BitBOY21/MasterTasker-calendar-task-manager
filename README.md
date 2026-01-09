@@ -31,6 +31,11 @@ Built with a focus on **Developer Experience (DX)** and **User Experience (UX)**
 
 ---
 
+### Calendar Page
+![Calendar Work View](./screenshot/Calendar.png)
+
+---
+
 ## 🛠️ Tech Stack
 
 ### **Frontend (Client)**
@@ -154,7 +159,7 @@ MasterTasker/
 ![Summary Page View](./screenshot/Summary Page.png)
 
 ### History Page
-![Summary Page View](./screenshot/History Page.png)
+![History Page View](./screenshot/History Page.png)
 
 ### Add/Edit Task 
 ![Add/Edit Task View](./screenshot/Add+Edit_Task.png)
