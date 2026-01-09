@@ -29,42 +29,35 @@ body {
    Design Tokens (Colors & Gradients)
    ============================================ */
 :root {
-    /* Primary Gradient */
     --gradient-primary: linear-gradient(135deg, #007bff, #6f42c1);
     --gradient-primary-hover: linear-gradient(135deg, #0056b3, #5a32a3);
     
-    /* Colors */
     --color-primary: #007bff;
     --color-primary-dark: #0056b3;
     --color-purple: #6f42c1;
     --color-purple-dark: #5a32a3;
     
-    /* Backgrounds */
     --bg-primary: #ffffff;
     --bg-secondary: #f4f6f9;
     --bg-light: #f9f9f9;
     --bg-gray: #f1f3f5;
     
-    /* Text */
     --text-primary: #333333;
     --text-secondary: #666666;
     --text-muted: #888888;
     --text-white: #ffffff;
     
-    /* Shadows */
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
     --shadow-md: 0 4px 15px rgba(0,0,0,0.05);
     --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
     --shadow-glass: 0 8px 32px rgba(0,0,0,0.1);
     
-    /* Border Radius */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
     --radius-pill: 9999px;
     
-    /* Spacing */
     --spacing-xs: 4px;
     --spacing-sm: 8px;
     --spacing-md: 16px;
@@ -76,7 +69,6 @@ body {
    Global Component Classes
    ============================================ */
 
-/* Primary Button (Gradient Pill) */
 .btn-primary {
     background: var(--gradient-primary);
     color: var(--text-white);
@@ -100,7 +92,6 @@ body {
     transform: translateY(0);
 }
 
-/* Secondary Button (Pill Filter) */
 .btn-secondary {
     background: var(--bg-gray);
     color: var(--text-primary);
@@ -123,7 +114,6 @@ body {
     font-weight: 600;
 }
 
-/* Card Component */
 .card {
     background: var(--bg-primary);
     border-radius: var(--radius-lg);
@@ -142,7 +132,6 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Input Fields */
 .input {
     background: var(--bg-light);
     border: 1px solid transparent;
@@ -165,7 +154,6 @@ body {
     color: var(--text-muted);
 }
 
-/* Glassmorphism Overlay */
 .glass-overlay {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
@@ -173,7 +161,6 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Gradient Text */
 .gradient-text {
     background: var(--gradient-primary);
     -webkit-background-clip: text;
@@ -222,41 +209,35 @@ body {
 
 /* --- Modern Scrollbar (MacOS Style) --- */
 
-/* 1. Size definition (thinner) */
 ::-webkit-scrollbar {
-    width: 6px;  /* Was 8px */
-    height: 6px; /* For horizontal scrolling */
+    width: 6px;
+    height: 6px;
 }
 
-/* 2. Track (scrollbar background) - always transparent */
 ::-webkit-scrollbar-track {
     background: transparent;
 }
 
-/* 3. Thumb (the moving part) - transparent by default! */
 ::-webkit-scrollbar-thumb {
-    background-color: transparent; /* The secret - not visible */
+    background-color: transparent;
     border-radius: 10px;
 }
 
-/* 4. Magic: scrollbar only appears when hovering over the scrollable area */
 *:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.15); /* Very subtle gray */
+    background-color: rgba(0, 0, 0, 0.15);
 }
 
-/* 5. When the mouse is directly over the scrollbar */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.3); /* Slightly darker for click indication */
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 /* --- Styles for React Split --- */
 .split {
     display: flex;
     flex-direction: row;
-    height: 100%; /* Takes the full height of mainArea */
+    height: 100%;
 }
 
-/* Handle vertical dragging (on the right side) */
 .split[style*="flex-direction: column"] {
     flex-direction: column !important;
 }
@@ -266,33 +247,30 @@ body {
     background-repeat: no-repeat;
     background-position: 50%;
     transition: background-color 0.2s;
-    z-index: 10; /* So it's above the content */
+    z-index: 10;
 }
 
-/* Horizontal drag cursor */
 .gutter.gutter-horizontal {
     cursor: col-resize;
-    width: 10px; /* Handle thickness */
+    width: 10px;
 }
 
-/* Vertical drag cursor */
 .gutter.gutter-vertical {
     cursor: row-resize;
-    height: 10px; /* Handle thickness */
+    height: 10px;
 }
 
 .gutter:hover {
-    background-color: #007bff; /* Blue on drag */
+    background-color: #007bff;
 }
 
-/* מחלקה לטקסט עם גרדיאנט המותג */
 .text-gradient {
   background: linear-gradient(135deg, #007bff, #6f42c1);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  display: inline-block; /* חשוב כדי שהגרדיאנט לא יימרח */
+  display: inline-block;
 }
 
 /* --- Task Row Hover Effects --- */
@@ -301,7 +279,7 @@ body {
 }
 
 .task-row-hover:hover svg {
-    color: #28a745 !important; /* Green checkmark on hover */
+    color: #28a745 !important;
 }
 
 .task-row-hover:hover div[title="Mark as Done"] {

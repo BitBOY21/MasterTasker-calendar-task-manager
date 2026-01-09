@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaCheck, FaClock, FaMapMarkerAlt, FaEdit, FaTrash, FaChevronDown, FaChevronUp, FaCalendarAlt } from 'react-icons/fa';
-
-// Same tags as in the form
-const TAG_OPTIONS = ["Work 💼", "Personal 🏠", "Shopping 🛒", "Health 💪", "Finance 💰", "Study 📚", "Vacation 🏖️", "Family 👨‍👩‍👧‍👦", "Errands 🏃"];
+import { FaCheck, FaClock, FaMapMarkerAlt, FaEdit, FaTrash, FaCalendarAlt } from 'react-icons/fa';
 
 const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
     const [localSubtasks, setLocalSubtasks] = useState(task.subtasks || []);
@@ -10,7 +7,6 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isHoveringCheck, setIsHoveringCheck] = useState(false);
     
-    // Edit Fields
     const [editTitle, setEditTitle] = useState(task.title);
     const [editDesc, setEditDesc] = useState(task.description || '');
     const [editSubtasks, setEditSubtasks] = useState(task.subtasks || []);
@@ -18,12 +14,10 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
     const [editPriority, setEditPriority] = useState(task.priority || 'Medium');
     const [editTags, setEditTags] = useState(task.tags || []);
     
-    // Times
     const [editDate, setEditDate] = useState('');
     const [editTime, setEditTime] = useState('');
     const [editEndTime, setEditEndTime] = useState('');
 
-    // Sync Props
     useEffect(() => {
         setLocalSubtasks(task.subtasks || []);
         setEditTitle(task.title);
@@ -50,7 +44,6 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
         }
     }, [task]);
 
-    // Save Handler
     const handleSave = () => {
         let finalDueDate = null;
         let finalEndDate = null;
@@ -81,7 +74,6 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
         await onUpdate(task._id, { isCompleted: newCompletedState });
     };
 
-    // Subtasks logic
     const handleSubtaskTextChange = (index, text) => {
         const updated = [...editSubtasks];
         updated[index].text = text;
@@ -100,35 +92,17 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
         onUpdate(task._id, { subtasks: newSubtasks });
     };
 
-    // Tags Logic
-    const handleAddTag = (e) => {
-        const val = e.target.value;
-        if (val && !editTags.includes(val)) {
-            setEditTags([...editTags, val]);
-        }
-        e.target.value = "";
-    };
-    const handleRemoveTag = (tagToRemove) => {
-        setEditTags(editTags.filter(t => t !== tagToRemove));
-    };
-
-    // Updated colors to match TaskFilters
     const getPriorityColor = (p) => {
-        if (p === 'High') return '#ff4d4d'; // Red
-        if (p === 'Medium') return '#ffad33'; // Orange/Yellow
-        if (p === 'Low') return '#28a745'; // Green
+        if (p === 'High') return '#ff4d4d';
+        if (p === 'Medium') return '#ffad33';
+        if (p === 'Low') return '#28a745';
         return '#6c757d';
     };
     
-    const getPriorityTextColor = (p) => {
-        return 'white'; // White text for better contrast with vibrant colors
-    };
+    const getPriorityTextColor = (p) => 'white';
 
-    const completedCount = localSubtasks.filter(s => s.isCompleted).length;
     const totalCount = localSubtasks.length;
-    const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-    // --- Render Edit Mode ---
     if (isEditing) {
         return (
             <div style={styles.editContainer}>
@@ -150,7 +124,6 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
 
                 <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} placeholder="Description..." rows="2" style={styles.editTextarea} />
 
-                {/* Subtasks Edit */}
                 <div style={styles.subtasksEditBox}>
                     {editSubtasks.map((subtask, i) => (
                         <div key={i} style={{display: 'flex', gap: '5px', marginBottom: '5px'}}>
@@ -169,10 +142,8 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
         );
     }
 
-    // --- Render View Mode (Compact Design) ---
     return (
         <div style={styles.taskRow} className="task-row-hover" onClick={() => setIsExpanded(!isExpanded)}>
-            {/* 1. Check Circle */}
             <div 
                 onClick={handleQuickComplete}
                 onMouseEnter={() => setIsHoveringCheck(true)}
@@ -190,9 +161,7 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
                 }} />
             </div>
 
-            {/* 2. Center Content */}
             <div style={styles.centerContent}>
-                {/* Row 1: Title */}
                 <span style={{
                     ...styles.taskTitle,
                     textDecoration: task.isCompleted ? 'line-through' : 'none',
@@ -201,7 +170,6 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
                     {task.title}
                 </span>
                 
-                {/* Row 2: Metadata (Priority + Date + Time + Location) */}
                 <div style={styles.metaRow}>
                     <span style={{
                         ...styles.priorityPill,
@@ -234,7 +202,6 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
                 </div>
             </div>
 
-            {/* 3. Right Side (Actions) */}
             <div style={styles.rightActions}>
                 <button 
                     onClick={(e) => {
@@ -253,7 +220,6 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
                 <button 
                     onClick={(e) => {
                         e.stopPropagation();
-                        // Ensure we send the ID as a string. If it's an object, convert it.
                         const idToSend = typeof task._id === 'object' ? task._id.toString() : task._id;
                         onDelete(idToSend); 
                     }} 
@@ -264,10 +230,8 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
                 </button>
             </div>
 
-            {/* 4. Expanded Details (Conditional) */}
             {isExpanded && (
                 <div style={styles.expandedDetails} onClick={(e) => e.stopPropagation()}>
-                    {/* Details Section */}
                     {task.description && (
                         <div style={{ marginBottom: '12px' }}>
                             <div style={styles.sectionHeader}>Details:</div>
@@ -275,14 +239,12 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
                         </div>
                     )}
                     
-                    {/* Tags */}
                     {task.tags && task.tags.length > 0 && (
                         <div style={styles.tagsRow}>
                             {task.tags.map(tag => <span key={tag} style={styles.tagPill}>{tag}</span>)}
                         </div>
                     )}
 
-                    {/* Subtasks Section */}
                     {totalCount > 0 && (
                         <div style={styles.subtasksList}>
                             <div style={styles.sectionHeader}>Subtasks:</div>
@@ -313,88 +275,71 @@ const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
 };
 
 const styles = {
-    // --- View Mode Styles (תצוגה רגילה) ---
-    
-    // השורה הראשית של המשימה
     taskRow: {
         display: 'flex',
-        flexWrap: 'wrap', // מאפשר שבירת שורות אם התוכן ארוך
-        alignItems: 'flex-start', // יישור למעלה (חשוב כשיש תיאור ארוך)
-        padding: '4px ', // ריווח פנימי נוח
-        borderBottom: '1px solid #f0f0f0', // קו מפריד עדין בין משימות
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        padding: '4px ',
+        borderBottom: '1px solid #f0f0f0',
         backgroundColor: 'white',
-        transition: 'background-color 0.2s ease', // אנימציה חלקה ב-Hover
+        transition: 'background-color 0.2s ease',
         position: 'relative',
-        cursor: 'pointer', // מראה שזה לחיץ
-        gap: '6px' // מרווח בין האלמנטים (צ'קבוקס, תוכן, כפתורים)
+        cursor: 'pointer',
+        gap: '6px'
     },
-    
-    // עיגול הצ'קבוקס (לסימון בוצע/לא בוצע)
     checkCircle: {
         width: '20px',
         height: '20px',
-        borderRadius: '50%', // הופך את הריבוע לעיגול מושלם
+        borderRadius: '50%',
         border: '2px solid #ddd',
-        marginTop: '2px', // יישור אופטי מול השורה הראשונה של הטקסט
+        marginTop: '2px',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         transition: 'all 0.2s',
-        flexShrink: 0, // מונע מהעיגול להתכווץ אם אין מקום
+        flexShrink: 0,
     },
     checkIcon: { fontSize: '10px' },
-    
-    // האזור המרכזי (כותרת + מידע נוסף)
     centerContent: {
-        flex: 1, // תופס את כל המקום הפנוי
+        flex: 1,
         display: 'flex',
-        flexDirection: 'column', // מסדר את הכותרת מעל המידע הנוסף
+        flexDirection: 'column',
         gap: '4px',
-        minWidth: 0 // טריק ב-Flexbox שמאפשר לטקסט להתקצר עם ...
+        minWidth: 0
     },
-    
-    // כותרת המשימה
     taskTitle: {
         fontSize: '1rem',
         fontWeight: '500',
         color: '#333',
-        lineHeight: '1.4' // גובה שורה לקריאות טובה
+        lineHeight: '1.4'
     },
-    
-    // שורת המידע (תאריך, שעה, מיקום, עדיפות)
     metaRow: {
         display: 'flex',
         alignItems: 'center',
-        gap: '6px', // מרווח בין הפריטים השונים
-        fontSize: '0.75rem', // טקסט קטן יותר למידע משני
+        gap: '6px',
+        fontSize: '0.75rem',
         color: '#666',
-        flexWrap: 'wrap' // יורד שורה אם אין מקום
+        flexWrap: 'wrap'
     },
-    
-    // תווית העדיפות (High/Medium/Low)
     priorityPill: {
         padding: '1px 6px',
         borderRadius: '4px',
         fontSize: '0.65rem',
         fontWeight: '600',
-        textTransform: 'uppercase', // אותיות גדולות
+        textTransform: 'uppercase',
         letterSpacing: '0.5px'
     },
-    
-    // פריט מידע בודד (אייקון + טקסט)
     metaItem: {
         display: 'flex',
         alignItems: 'center',
         gap: '2px'
     },
-
-    // כפתורי הפעולה בצד ימין (עריכה, מחיקה)
     rightActions: {
         display: 'flex',
         alignItems: 'center',
         gap: '2px',
-        opacity: 0.6, // שקוף חלקית כברירת מחדל (פחות בולט)
+        opacity: 0.6,
         transition: 'opacity 0.2s'
     },
     actionIconBtn: {
@@ -409,20 +354,13 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        ':hover': {
-            backgroundColor: '#f5f5f5',
-            color: '#333'
-        }
     },
-
-    // --- Expanded Details (פירוט מורחב שנפתח בלחיצה) ---
-    
     expandedDetails: {
         width: '100%',
         marginTop: '0px',
-        paddingLeft: '32px', // הזחה שמאלה כדי להתיישר עם הטקסט (מתחת לצ'קבוקס)
-        animation: 'fadeIn 0.2s ease', // אנימציית כניסה
-        cursor: 'default' // סמן רגיל (לא יד)
+        paddingLeft: '32px',
+        animation: 'fadeIn 0.2s ease',
+        cursor: 'default'
     },
     sectionHeader: {
         fontSize: '0.85rem',
@@ -450,10 +388,8 @@ const styles = {
         padding: '2px 8px', 
         borderRadius: '12px' 
     },
-    
-    // רשימת תתי-המשימות
     subtasksList: { 
-        backgroundColor: '#f8f9fa', // רקע אפור בהיר להפרדה
+        backgroundColor: '#f8f9fa',
         borderRadius: '8px',
         marginTop: '10px' 
     },
@@ -468,18 +404,15 @@ const styles = {
     miniCheck: { 
         width: '16px', 
         height: '16px', 
-        borderRadius: '4px', // ריבוע עם פינות עגולות
+        borderRadius: '4px',
         border: '1px solid #ccc', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center' 
     },
-
-    // --- Edit Mode Styles (מצב עריכה מהירה) ---
-    
     editContainer: { 
         padding: '15px',
-        border: '1px solid #007bff', // מסגרת כחולה שמסמנת עריכה
+        border: '1px solid #007bff',
         borderRadius: '8px', 
         backgroundColor: '#fff', 
         marginBottom: '10px' 
@@ -518,7 +451,7 @@ const styles = {
         borderRadius: '4px', 
         fontSize: '0.9rem', 
         marginBottom: '10px', 
-        resize: 'vertical' // מאפשר למשתמש לשנות את הגובה
+        resize: 'vertical'
     },
     subtasksEditBox: { 
         backgroundColor: '#f9f9f9', 
@@ -539,7 +472,7 @@ const styles = {
     },
     addStepBtn: { 
         background: 'none', 
-        border: '1px dashed #007bff', // מסגרת מקווקוות
+        border: '1px dashed #007bff',
         color: '#007bff', 
         padding: '5px 10px', 
         borderRadius: '4px', 
@@ -550,7 +483,7 @@ const styles = {
     editActions: { 
         display: 'flex', 
         gap: '10px', 
-        justifyContent: 'flex-end' // מיישר את כפתורי השמירה לשמאל (או ימין תלוי ב-RTL/LTR)
+        justifyContent: 'flex-end'
     },
     saveBtn: { 
         backgroundColor: '#007bff', 

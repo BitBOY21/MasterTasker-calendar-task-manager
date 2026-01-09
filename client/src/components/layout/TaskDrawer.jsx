@@ -1,25 +1,20 @@
 import React from 'react';
-import TaskItem from '../../features/tasks/components/TaskItem'; // Updated path
+import TaskItem from '../../features/tasks/components/TaskItem';
 
-// קומפוננטת "מגירה" שנפתחת מצד ימין להצגת פרטי משימה
 const TaskDrawer = ({ isOpen, onClose, task, onUpdate, onDelete }) => {
     return (
         <>
-            {/* שכבת הרקע הכהה (Overlay) - מכסה את שאר המסך */}
             <div 
                 style={{
                     ...styles.overlay,
-                    // אם המגירה פתוחה - הרקע נראה ולחיץ. אם סגורה - הוא שקוף ולא מפריע
                     opacity: isOpen ? 1 : 0,
                     pointerEvents: isOpen ? 'auto' : 'none'
                 }} 
                 onClick={onClose}
             />
 
-            {/* המגירה עצמה - החלון הלבן שנכנס מצד ימין */}
             <div style={{
                 ...styles.drawer,
-                // אנימציית הכניסה: אם פתוח - במיקום 0. אם סגור - זז 100% ימינה (מחוץ למסך)
                 transform: isOpen ? 'translateX(0)' : 'translateX(100%)'
             }}>
                 <div style={styles.header}>
@@ -27,13 +22,11 @@ const TaskDrawer = ({ isOpen, onClose, task, onUpdate, onDelete }) => {
                     <button onClick={onClose} style={styles.closeBtn}>✕</button>
                 </div>
 
-                {/* תוכן המגירה - מציג את המשימה או הודעה ריקה */}
                 <div style={styles.content}>
                     {task ? (
                         <TaskItem 
                             task={task} 
                             onUpdate={onUpdate} 
-                            // FIXED: Pass the full task object to onDelete instead of just the ID
                             onDelete={() => { onDelete(task); onClose(); }}
                         />
                     ) : (
@@ -54,12 +47,12 @@ const styles = {
     },
     drawer: {
         position: 'fixed', top: 0, right: 0, bottom: 0,
-        width: '500px', // Wide and comfortable drawer
+        width: '500px',
         maxWidth: '90%',
         backgroundColor: 'white',
         boxShadow: '-5px 0 30px rgba(0,0,0,0.1)',
         zIndex: 999,
-        transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)', // Smooth animation
+        transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
         display: 'flex', flexDirection: 'column'
     },
     header: {

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { taskService } from '../../../services/taskService';
 import { FaTimes, FaTrash, FaMapMarkerAlt, FaClock, FaCalendarAlt, FaTag, FaChevronDown, FaFlag, FaListUl, FaAlignLeft, FaPen, FaPlus, FaRedo } from 'react-icons/fa';
-import ConfirmationModal from '../../../components/ui/ConfirmationModal';
 
 const TAG_OPTIONS = [
     "Work 💼", "Personal 🏠", "Shopping 🛒", "Health 💪", "Finance 💰",
@@ -28,7 +26,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
     const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false);
     const tagsDropdownRef = useRef(null);
 
-    // Helper to format date as YYYY-MM-DD using local time
     const toLocalDateString = (date) => {
         if (!date) return '';
         const d = new Date(date);
@@ -57,8 +54,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                 }
                 if (taskToEdit.endDate) {
                     const d = new Date(taskToEdit.endDate);
-                    
-                    // Check if end date is different from start date
                     const startDate = new Date(taskToEdit.dueDate);
                     const isSameDay = d.toDateString() === startDate.toDateString();
                     
@@ -72,7 +67,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                 }
             } else {
                 resetForm();
-                // Use initialDate if provided, otherwise default to today
                 const d = initialDate ? new Date(initialDate) : new Date();
                 setDateStr(toLocalDateString(d));
             }
@@ -91,14 +85,12 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
         };
     }, []);
 
-    // Effect to handle Repeat locking when End Date is selected
     useEffect(() => {
         if (showEndDate) {
             setRecurrence('none');
         }
     }, [showEndDate]);
 
-    // Effect to validate End Date against Start Date
     useEffect(() => {
         if (showEndDate && dateStr && endDateStr) {
             if (endDateStr < dateStr) {
@@ -129,10 +121,8 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
         let finalEndDate = null;
         
         if (showEndDate && endDateStr) {
-             // Explicit end date
              finalEndDate = combineDateTime(endDateStr, endTimeStr || '23:59');
         } else if (showEndTime && endTimeStr) {
-            // Same day end time
             finalEndDate = combineDateTime(dateStr, endTimeStr);
         }
 
@@ -167,14 +157,10 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
         return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long' });
     };
 
-    // Handle delete button click - delegate to parent handler which manages modals
     const handleDeleteClick = () => {
         if (taskToEdit) {
-            // Use the new prop name to ensure we call the right function
             if (onRequestDelete) {
                 onRequestDelete(taskToEdit); 
-            } else {
-                console.error("onRequestDelete prop is missing in TaskForm");
             }
             onClose();
         }
@@ -183,13 +169,11 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
     if (!isOpen) return null;
 
     return (
-        // המעטפת החיצונית (Overlay) - אחראית על הרקע הכהה והמיקום במרכז
         <div style={styles.overlay} onClick={onClose}>
             <div style={styles.modal} onClick={e => e.stopPropagation()}>
                 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     
-                    {/* --- חלק עליון: כותרת המשימה --- */}
                     <div style={styles.field}>
                         <label style={styles.label}><FaPen /> Task Name</label>
                         <div style={styles.inputRow}>
@@ -210,7 +194,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                         </div>
                     </div>
 
-                    {/* --- שורה 1: תאריך וחזרתיות --- */}
                     <div style={styles.grid}>
                         <div style={styles.field}>
                             <label style={styles.label}><FaCalendarAlt /> Date</label>
@@ -224,7 +207,7 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                                         <input 
                                             type="date" 
                                             value={endDateStr} 
-                                            min={dateStr} // Prevent selecting date before start date
+                                            min={dateStr}
                                             onChange={e => setEndDateStr(e.target.value)} 
                                             style={styles.dateInput} 
                                         />
@@ -250,7 +233,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                         </div>
                     </div>
 
-                    {/* --- שורה 2: שעה וכל היום --- */}
                     <div style={styles.grid}>
                         <div style={styles.field}>
                             <label style={styles.label}><FaClock /> Time</label>
@@ -280,13 +262,11 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                         </div>
                     </div>
 
-                    {/* --- מיקום (שורה מלאה) --- */}
                     <div style={styles.field}>
                         <label style={styles.label}><FaMapMarkerAlt /> Location</label>
                         <input type="text" placeholder="Add location" value={location} onChange={e => setLocation(e.target.value)} style={styles.input} />
                     </div>
 
-                    {/* --- גריד: עדיפות ותגיות --- */}
                     <div style={styles.grid}>
                         <div style={styles.field}>
                             <label style={styles.label}><FaFlag /> Priority</label>
@@ -349,7 +329,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                         </div>
                     </div>
 
-                    {/* --- תיאור המשימה (עבר למטה) --- */}
                     <div style={styles.field}>
                         <label style={styles.label}><FaAlignLeft /> Details</label>
                         <textarea
@@ -359,7 +338,6 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                         />
                     </div>
 
-                    {/* --- תתי משימות --- */}
                     <div style={styles.subtasksContainer}>
                         <div style={styles.aiHeader}>
                             <span style={styles.label}><FaListUl /> Subtasks</span>
@@ -405,61 +383,40 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
 };
 
 const styles = {
-    // --- 1. מיכלים ורקעים (Containers) ---
-
-    // מסך הרקע הכהה - ממקד את תשומת הלב בטופס
     overlay: {
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)', // כהות נעימה
-        backdropFilter: 'blur(5px)', // אפקט זכוכית מודרני
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(5px)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 1000
     },
-
-    // החלון הצף עצמו
     modal: {
         backgroundColor: '#fff',
         width: '550px',
         maxWidth: '95%',
-        borderRadius: '20px', // פינות עגולות יותר למראה רך
-        padding: '28px', // ריווח פנימי נדיב
-        boxShadow: '0 20px 60px rgba(0,0,0,0.15)', // צל עמוק שנותן תחושת ריחוף
+        borderRadius: '20px',
+        padding: '28px',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
         maxHeight: '90vh',
-        overflowY: 'auto' // גלילה אם הטופס ארוך מדי
+        overflowY: 'auto'
     },
-    
-    // פריסת הטופס הראשי
     form: { display: 'flex', flexDirection: 'column', gap: '16px' },
-
-    // גריד לשדות שמופיעים אחד ליד השני (כמו תאריך ושעה)
     grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' },
-
-    // עטיפה לכל שדה בודד (תווית + קלט)
     field: { display: 'flex', flexDirection: 'column', gap: '8px' },
-
-    // שורת קלט (למשל כותרת + כפתור מחיקה)
     inputRow: { display: 'flex', alignItems: 'center', gap: '10px', width: '100%' },
-
-    // --- 2. טיפוגרפיה ותוויות (Typography) ---
-
-    // התווית מעל כל שדה (למשל "TASK NAME")
     label: {
         fontSize: '0.75rem',
         fontWeight: '700',
         color: '#888',
-        textTransform: 'uppercase', // אותיות גדולות למראה מקצועי
+        textTransform: 'uppercase',
         letterSpacing: '0.5px',
         display: 'flex',
         alignItems: 'center',
         gap: '6px'
     },
-
-    // --- 3. שדות קלט (Inputs) ---
-
-    // הקלט הראשי (כותרת המשימה) - גדול ובולט יותר
     mainInput: { 
         flex: 1, 
         fontSize: '1.2rem',
@@ -472,8 +429,6 @@ const styles = {
         fontFamily: 'inherit',
         transition: 'border-color 0.2s'
     },
-    
-    // אזור הטקסט (תיאור)
     descInput: {
         border: '1px solid #eee', 
         borderRadius: '10px',
@@ -486,8 +441,6 @@ const styles = {
         boxSizing: 'border-box', 
         fontFamily: 'inherit' 
     },
-    
-    // שדה קלט סטנדרטי (תאריך, שעה, מיקום)
     input: {
         padding: '10px 12px',
         borderRadius: '10px',
@@ -497,40 +450,31 @@ const styles = {
         width: '100%', 
         boxSizing: 'border-box',
         fontFamily: 'inherit',
-        backgroundColor: '#f9f9f9' // רקע אפור בהיר מאוד להפרדה
+        backgroundColor: '#f9f9f9'
     },
-
-    // שדה קלט לתאריך (רחב יותר)
     dateInput: {
         padding: '10px 12px',
         borderRadius: '10px',
         border: '1px solid #eee', 
         fontSize: '0.95rem',
         outline: 'none', 
-        width: '137px', // כאן משנים את רוחב התאריך
+        width: '137px',
         boxSizing: 'border-box',
         fontFamily: 'inherit',
         backgroundColor: '#f9f9f9'
     },
-
-    // שדה קלט לשעה (צר יותר)
     timeInput: {
         padding: '10px 12px',
         borderRadius: '10px',
         border: '1px solid #eee', 
         fontSize: '0.95rem',
         outline: 'none', 
-        width: '100px', // כאן משנים את רוחב השעה
+        width: '100px',
         boxSizing: 'border-box',
         fontFamily: 'inherit',
         backgroundColor: '#f9f9f9'
     },
-
-    // --- 4. כפתורים ופעולות (Buttons & Actions) ---
-
     actions: { display: 'flex', gap: '5px', flexShrink: 0 },
-
-    // כפתורי אייקון קטנים (מחיקה, סגירה)
     iconBtn: {
         backgroundColor: 'transparent',
         border: 'none',
@@ -544,8 +488,6 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center'
     },
-    
-    // כפתור טקסט ללא מסגרת (הוספת תאריך סיום)
     timeRow: { display: 'flex', alignItems: 'center', gap: '8px' },
     linkBtn: {
         backgroundColor: 'transparent',
@@ -556,9 +498,6 @@ const styles = {
         cursor: 'pointer',
         whiteSpace: 'nowrap'
     },
-
-    // --- 5. בחירת עדיפות (Priority Pills) ---
-
     pills: {
         display: 'flex',
         gap: '4px',
@@ -584,9 +523,6 @@ const styles = {
         boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
         transform: 'scale(1.02)'
     },
-
-    // --- 6. תפריט תגיות (Tags Dropdown) ---
-
     multiSelectBtn: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -622,9 +558,6 @@ const styles = {
         alignItems: 'center',
         borderBottom: '1px solid #f0f0f0'
     },
-
-    // --- 7. תתי משימות (Subtasks) ---
-
     subtasksContainer: {
         marginTop: '10px',
         padding: '16px',
@@ -633,14 +566,10 @@ const styles = {
         backgroundColor: '#fafafa'
     },
     aiHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' },
-    aiBtn: { backgroundColor: '#6f42c1', color: 'white', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 6px rgba(111, 66, 193, 0.3)' },
     subtaskList: { display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' },
     subtaskItem: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', padding: '4px 0' },
     addSubtask: { display: 'flex', gap: '10px', alignItems: 'center' },
     subtaskActions: { display: 'flex', gap: '5px' },
-
-    // --- 8. כפתור שליחה (Submit) ---
-
     submitBtn: {
         marginTop: '20px',
         background: 'linear-gradient(135deg, #007bff, #0056b3)',

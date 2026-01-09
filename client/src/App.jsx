@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// 1. ייבוא הראוטר
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTaskContext } from './context/TaskContext';
 import Sidebar from './components/layout/Sidebar';
@@ -17,13 +16,14 @@ import ConfirmationModal from './components/ui/ConfirmationModal';
 import DeleteRecurringModal from './components/ui/DeleteRecurringModal';
 import './index.css';
 
-// --- רכיב פנימי שמנהל את הניווט אחרי התחברות ---
+/**
+ * Main layout component for authenticated users.
+ * Handles navigation, task management state, and global modals.
+ */
 const AppLayout = ({ user, onLogout }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // חישוב המסך הנוכחי מתוך ה-URL עבור ה-Sidebar
-    // לדוגמה: אם הכתובת היא /calendar, המשתנה יהיה 'calendar'
     const currentPath = location.pathname.replace('/', '');
     const currentView = currentPath === '' || currentPath === 'dashboard' ? 'dashboard' : currentPath;
 
@@ -34,12 +34,10 @@ const AppLayout = ({ user, onLogout }) => {
     const [selectedTask, setSelectedTask] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
 
-    // State for delete confirmation modals
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isRecurringDeleteModalOpen, setIsRecurringDeleteModalOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
 
-    // פונקציית גישור: כשהסרגל הצדדי מבקש לשנות מסך, אנחנו משנים את ה-URL
     const handleViewChange = (view) => {
         navigate(`/${view}`);
     };
@@ -49,10 +47,9 @@ const AppLayout = ({ user, onLogout }) => {
         setIsDrawerOpen(true);
     };
 
-    // New handler specifically for opening the Edit Modal (TaskForm)
     const handleEditTask = (task) => {
         setSelectedTask(task);
-        setIsAddModalOpen(true); // Reusing the Add Modal for editing
+        setIsAddModalOpen(true);
     };
 
     const handleAddTask = async (newTask) => {
@@ -68,28 +65,20 @@ const AppLayout = ({ user, onLogout }) => {
         }
     };
 
-    // Modified delete handler to check for recurrence
     const handleRequestDelete = (taskOrId) => {
-        console.log("🗑️ handleRequestDelete called with:", taskOrId);
-
-        // Protection: If we received an Event object by mistake - ignore it
         if (taskOrId && taskOrId.preventDefault) {
-            console.error("❌ Error: Received Event object instead of Task ID");
             return;
         }
 
         let task = null;
         
-        // Case A: Received ID as string (most common)
         if (typeof taskOrId === 'string') {
             task = tasks.find(t => t._id === taskOrId);
         }
-        // Case B: Received full task object (has _id field)
         else if (typeof taskOrId === 'object' && taskOrId !== null && taskOrId._id) {
             task = taskOrId;
         }
         
-        // Check if we found a valid task to delete
         if (task) {
             setTaskToDelete(task);
             if (task.recurrence && task.recurrence !== 'none') {
@@ -98,28 +87,21 @@ const AppLayout = ({ user, onLogout }) => {
                 setIsDeleteModalOpen(true);
             }
         } else if (typeof taskOrId === 'string') {
-             // Fallback if task not found in list (e.g. calendar view might have different data source or sync issue)
-             console.warn("⚠️ Task not found in list, assuming single delete for ID:", taskOrId);
              setTaskToDelete({ _id: taskOrId });
              setIsDeleteModalOpen(true);
-        } else {
-             console.error("⚠️ Could not find task to delete for input:", taskOrId);
         }
     };
 
-    // Actual delete function called by simple modal
     const handleConfirmDelete = async () => {
         if (taskToDelete) {
-            // Ensure we have a string ID
             const id = typeof taskToDelete._id === 'object' ? taskToDelete._id.toString() : taskToDelete._id;
             await deleteTask(id);
-            setIsDrawerOpen(false); // Close drawer if open
+            setIsDrawerOpen(false);
         }
         setIsDeleteModalOpen(false);
         setTaskToDelete(null);
     };
 
-    // Delete function for recurring tasks
     const handleConfirmRecurringDelete = async (deletePolicy) => {
         if (taskToDelete) {
             const id = typeof taskToDelete._id === 'object' ? taskToDelete._id.toString() : taskToDelete._id;
@@ -136,8 +118,6 @@ const AppLayout = ({ user, onLogout }) => {
 
     return (
         <div className="app-layout" style={styles.appContainer}>
-
-            {/* ה-Sidebar מקבל את המיקום מה-URL ומשתמש ב-navigate לשינוי */}
             <Sidebar
                 currentView={currentView}
                 onChangeView={handleViewChange}
@@ -145,7 +125,6 @@ const AppLayout = ({ user, onLogout }) => {
             />
 
             <div style={styles.mainContent}>
-                {/* הגדרת הנתיבים (Routes) במקום Switch Case */}
                 <Routes>
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/dashboard" element={<DashboardPage onChangeView={handleViewChange} user={user} onRequestDelete={handleRequestDelete} />} />
@@ -167,11 +146,9 @@ const AppLayout = ({ user, onLogout }) => {
                     <Route path="/history" element={<HistoryPage />} />
                     <Route path="/settings" element={<SettingsPage user={user} />} />
 
-                    {/* נתיב ברירת מחדל לכל כתובת לא מוכרת */}
                     <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
 
-                {/* כפתור הפלוס מופיע רק אם אנחנו לא ב-dashboard */}
                 {currentView !== 'dashboard' && (
                     <button
                         onClick={() => {
@@ -191,7 +168,7 @@ const AppLayout = ({ user, onLogout }) => {
                 onClose={() => setIsDrawerOpen(false)}
                 task={selectedTask}
                 onUpdate={handleUpdateTask}
-                onDelete={handleRequestDelete} // Pass the new handler
+                onDelete={handleRequestDelete}
             />
 
             <TaskForm
@@ -199,16 +176,15 @@ const AppLayout = ({ user, onLogout }) => {
                 onClose={() => {
                     setIsAddModalOpen(false);
                     setSelectedDate(null);
-                    setSelectedTask(null); // Clear selected task when closing
+                    setSelectedTask(null);
                 }}
                 onAdd={handleAddTask}
-                onRequestDelete={handleRequestDelete} // FIXED: Changed prop name from onDelete to onRequestDelete
+                onRequestDelete={handleRequestDelete}
                 onUpdate={handleUpdateTask}
                 taskToEdit={selectedTask}
                 initialDate={selectedDate}
             />
 
-            {/* Confirmation Modal for single tasks */}
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
@@ -216,7 +192,6 @@ const AppLayout = ({ user, onLogout }) => {
                 title="Delete Task?"
             />
 
-            {/* New Modal for recurring tasks */}
             <DeleteRecurringModal
                 isOpen={isRecurringDeleteModalOpen}
                 onClose={() => setIsRecurringDeleteModalOpen(false)}
@@ -226,7 +201,6 @@ const AppLayout = ({ user, onLogout }) => {
     );
 };
 
-// --- הרכיב הראשי ---
 function App() {
     const [token, setToken] = useState(null);
     const [user, setUser] = useState({ name: 'User' });
@@ -236,7 +210,6 @@ function App() {
     useEffect(() => {
         const savedToken = authService.getToken();
         if (savedToken) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setToken(savedToken);
             setUser({ name: authService.getUserName() });
         }
@@ -254,7 +227,6 @@ function App() {
         setUser({ name: 'User' });
     };
 
-    // אם אין טוקן, מציגים את הלוגין (מחוץ לראוטר, או בתוכו - לבחירתך. כאן השארתי כמו שהיה)
     if (!token) return <Login onLogin={(authData) => {
         if (typeof authData === 'string') {
             setToken(authData);
@@ -267,7 +239,6 @@ function App() {
         }
     }} />;
 
-    // ברגע שמחוברים, עוטפים ב-BrowserRouter כדי לאפשר ניווט מבוסס URL
     return (
         <BrowserRouter>
             <AppLayout user={user} onLogout={handleLogout} />
