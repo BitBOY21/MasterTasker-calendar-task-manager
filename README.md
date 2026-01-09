@@ -1,4 +1,4 @@
-# 🚀 MasterTasker
+# MasterTasker
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Node.js](https://img.shields.io/badge/Node.js-18-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
@@ -144,14 +144,23 @@ MasterTasker/
 
 ## 📸 Screenshots
 
-### Dashboard
-> A personalized daily overview with greetings, stats, and AI-generated summaries.
-*(Add screenshot here)*
+### Home Page
+![Home Page View](./screenshot/Home page.png)
 
-### Calendar Work View
-> Drag-and-drop calendar interface for managing schedule and tasks.
-*(Add screenshot here)*
+### Calendar Page
+![Calendar Work View](./screenshot/Calendar.png)
 
+### Summary Page
+![Summary Page View](./screenshot/Summary Page.png)
+
+### History Page
+![Summary Page View](./screenshot/History Page.png)
+
+### Add/Edit Task 
+![Add/Edit Task View](./screenshot/Add+Edit_Task.png)
+
+### Login/Carte Account 
+![Add/Edit Task View](./screenshot/Login+Carte_Account.png)
 ---
 
 ## 📄 License
