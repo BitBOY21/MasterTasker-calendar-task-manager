@@ -179,7 +179,7 @@ const styles = {
     filtersSection: {
         flexShrink: 0,
         maxHeight: '60%',
-        overflowY: 'auto',
+        overflowY: 'visible',
         padding: '20px'
     },
 

@@ -63,7 +63,7 @@ const StatsRow = ({ tasks }) => {
             <StatCard 
                 icon={<FaFire />} 
                 color="#dc3545" 
-                label="Urgent" 
+                label="High Priority" 
                 value={pendingUrgent} 
                 subValue={`/ ${totalUrgent}`} 
             />

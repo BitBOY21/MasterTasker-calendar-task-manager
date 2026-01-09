@@ -4,7 +4,7 @@ import { FaChevronDown, FaSearch, FaSortAmountDown } from 'react-icons/fa';
 
 const TAG_OPTIONS = [
     "Work 💼", "Personal 🏠", "Shopping 🛒", "Health 💪", 
-    "Finance 💰", "Study 📚", "Urgent 🔥", "Family 👨‍👩‍👧‍👦", "Errands 🏃"
+    "Finance 💰", "Study 📚", "Vacation 🏖️", "Family 👨‍👩‍👧‍👦", "Errands 🏃"
 ];
 
 const NewSummaryFilters = ({ 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaCheck, FaClock, FaMapMarkerAlt, FaEdit, FaTrash, FaChevronDown, FaChevronUp, FaCalendarAlt } from 'react-icons/fa';
 
 // Same tags as in the form
-const TAG_OPTIONS = ["Work 💼", "Personal 🏠", "Shopping 🛒", "Health 💪", "Finance 💰", "Study 📚", "Urgent 🔥", "Family 👨‍👩‍👧‍👦", "Errands 🏃"];
+const TAG_OPTIONS = ["Work 💼", "Personal 🏠", "Shopping 🛒", "Health 💪", "Finance 💰", "Study 📚", "Vacation 🏖️", "Family 👨‍👩‍👧‍👦", "Errands 🏃"];
 
 const TaskItem = ({ task, onDelete, onUpdate, onEdit }) => {
     const [localSubtasks, setLocalSubtasks] = useState(task.subtasks || []);

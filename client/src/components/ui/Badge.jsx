@@ -15,7 +15,7 @@ const Badge = ({ children, variant = 'default', style = {} }) => {
     
     if (variant === 'default' && typeof children === 'string') {
         const lower = children.toLowerCase();
-        if (lower === 'high' || lower === 'urgent') activeVariant = variants.high;
+        if (lower === 'high') activeVariant = variants.high;
         if (lower === 'medium') activeVariant = variants.medium;
         if (lower === 'low' || lower === 'completed') activeVariant = variants.low;
     }

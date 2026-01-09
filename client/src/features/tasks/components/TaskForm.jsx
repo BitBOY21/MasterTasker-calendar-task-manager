@@ -5,7 +5,7 @@ import ConfirmationModal from '../../../components/ui/ConfirmationModal';
 
 const TAG_OPTIONS = [
     "Work 💼", "Personal 🏠", "Shopping 🛒", "Health 💪", "Finance 💰",
-    "Study 📚", "Urgent 🔥", "Family 👨‍👩‍👧‍👦", "Errands 🏃"
+    "Study 📚", "Vacation 🏖️", "Family 👨‍👩‍👧‍👦", "Errands 🏃"
 ];
 
 const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdit, initialDate }) => {
