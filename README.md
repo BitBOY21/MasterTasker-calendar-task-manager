@@ -2,14 +2,13 @@
 
 **MasterTasker** is a modern, full-stack task management application designed to boost productivity. It goes beyond simple to-do lists by integrating **Google Gemini AI** for intelligent task breakdown, a robust Calendar View for scheduling, and detailed Analytics to track performance.
 
-The system supports recurring tasks, multi-day events, and provides a seamless, "Gmail-like" user experience with optimistic UI updates and smart undo functionality.
+The system supports recurring tasks, multi-day events, and provides a seamless user experience with optimistic UI updates and smart task management logic.
 
 ![MasterTasker Dashboard Preview](./assets/dashboard-preview.png)
 *(Note: Please add a screenshot of your dashboard here)*
 
 ## ✨ Key Features
 
-* **🤖 AI Task Breakdown:** Powered by Google Gemini AI, automatically breaks down complex tasks into actionable subtasks.
 * **📅 Interactive Calendar:** Full drag-and-drop support, monthly/weekly/daily views, and multi-day event handling.
 * **🔁 Smart Recurring Tasks:** Robust support for daily, weekly, monthly, and yearly recurring tasks (Google Calendar style logic).
 * **⚡ Modern UX:** Optimistic UI updates for instant feedback, toast notifications with **Undo**, and custom confirmation modals.
@@ -33,7 +32,6 @@ The system supports recurring tasks, multi-day events, and provides a seamless, 
 * **Database:** MongoDB (Mongoose ODM)
 * **Auth:** JWT & bcryptjs
 * **Validation:** Joi
-* **AI Integration:** Google Generative AI SDK
 * **Security:** Helmet, XSS-Clean, Mongo-Sanitize, CORS
 
 ## 📂 Project Structure

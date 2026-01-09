@@ -126,18 +126,6 @@ export const useTasks = () => {
         }
     };
 
-    // Generate AI
-    const generateAI = async (id) => {
-        try {
-            const updatedTask = await taskService.generateAI(id);
-            setTasks(prev => prev.map(t => t._id === id ? updatedTask : t));
-            return updatedTask;
-        } catch (err) {
-            console.error("AI Error:", err);
-            throw err;
-        }
-    };
-
     return {
         tasks,
         loading,
@@ -145,7 +133,6 @@ export const useTasks = () => {
         fetchTasks,
         addTask,
         updateTask,
-        deleteTask,
-        generateAI
+        deleteTask
     };
 };

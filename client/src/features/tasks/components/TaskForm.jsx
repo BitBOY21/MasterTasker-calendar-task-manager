@@ -339,7 +339,7 @@ const TaskForm = ({ isOpen, onClose, onAdd, onUpdate, onRequestDelete, taskToEdi
                     </div>
 
                     <div style={styles.subtasksContainer}>
-                        <div style={styles.aiHeader}>
+                        <div style={styles.subtasksHeader}>
                             <span style={styles.label}><FaListUl /> Subtasks</span>
                         </div>
                         <div style={styles.subtaskList}>
@@ -565,7 +565,7 @@ const styles = {
         borderRadius: '12px',
         backgroundColor: '#fafafa'
     },
-    aiHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' },
+    subtasksHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' },
     subtaskList: { display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' },
     subtaskItem: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', padding: '4px 0' },
     addSubtask: { display: 'flex', gap: '10px', alignItems: 'center' },

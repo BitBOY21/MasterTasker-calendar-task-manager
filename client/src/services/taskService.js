@@ -25,18 +25,6 @@ export const taskService = {
         return response.data;
     },
 
-    // Legacy function (can be kept for backward compatibility or removed later)
-    generateAI: async (id) => {
-        const response = await api.post(`/tasks/${id}/ai-assist`);
-        return response.data;
-    },
-
-    // New function to get task breakdown from AI (before creation)
-    getAiBreakdown: async (title) => {
-        const response = await api.post('/ai/breakdown', { title });
-        return response.data.steps; // Returns an array of strings
-    },
-
     reorder: async (tasks) => {
         const tasksOrder = tasks.map((task, index) => ({
             id: task._id,
